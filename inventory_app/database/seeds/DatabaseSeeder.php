@@ -14,7 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call(UserTableSeeder::class);
+        // Populate tables with inital entries
+        $this->call(DepartmentTableSeeder::class);
+        $this->call(CategoryTableSeeder::class);
+        $this->call(VendorTableSeeder::class);
 
         Model::reguard();
     }
