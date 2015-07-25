@@ -12,4 +12,20 @@ class Vendor extends Model
      * @var string
      */
     protected $table = 'vendor';
+
+    /**
+     * The Price Rule that belong to the Vendor.
+     */
+    public function price_rule()
+    {
+        return $this->belongsToMany('App\Price_Rule')->withTimestamps();
+    }
+
+    /**
+     * Get the Invoice for the Vendor.
+     */
+    public function invoice()
+    {
+        return $this->hasMany('App\Invoice');
+    }  
 }
