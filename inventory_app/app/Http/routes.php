@@ -12,5 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('invoice');
 });
+
+Route::get('dashboard', function () {
+    return view('dashboard');
+});
+
+Route::resource('invoice', 'InvoiceController');

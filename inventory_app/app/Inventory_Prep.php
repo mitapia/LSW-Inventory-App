@@ -37,4 +37,12 @@ class Inventory_Prep extends Model
     {
         return $this->belongsTo('App\Invoice');
     }
+
+    /**
+     * Get the Size_Matrix that owns the Invetory_Prep item.
+     */
+    public function size_matrix()
+    {
+        return $this->belongsTo('App\Size_Matrix');
+    }
 }

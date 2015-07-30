@@ -28,4 +28,15 @@ class Invoice extends Model
     {
         return $this->belongsTo('App\Vendor');
     }
+
+    /**
+     * Scope a query to only include last server added.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeLastCreated($query)
+    {
+
+        return $query->orderBy('created_at', 'desc')->firstorFail();
+    }
 }
