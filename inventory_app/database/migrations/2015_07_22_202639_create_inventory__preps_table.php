@@ -12,7 +12,7 @@ class CreateInventoryPrepsTable extends Migration
      */
     public function up()
     {
-        Schema::create('inventory__prep', function (Blueprint $table) {
+        Schema::create('inventory_prep', function (Blueprint $table) {
             $table->increments('id');
             $table->string('style', 31);
             $table->decimal('cost', 13, 2);
@@ -20,6 +20,7 @@ class CreateInventoryPrepsTable extends Migration
             $table->integer('department_id');
             $table->integer('category_id');
             $table->integer('invoice_id');
+            $table->integer('size_matrix_id');
             $table->integer('invoice_vendor_id');   // not sure if this is neccesary
             $table->timestamps();
         });
@@ -32,6 +33,6 @@ class CreateInventoryPrepsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('inventory__prep');
+        Schema::drop('inventory_prep');
     }
 }

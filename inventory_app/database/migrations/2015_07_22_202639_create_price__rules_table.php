@@ -12,7 +12,7 @@ class CreatePriceRulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('price__rule', function (Blueprint $table) {
+        Schema::create('price_rule', function (Blueprint $table) {
             $table->increments('id');
             $table->decimal('minimum_cost', 13, 2);
             $table->decimal('maximum_cost', 13, 2);
@@ -28,6 +28,6 @@ class CreatePriceRulesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('price__rule');
+        Schema::drop('price_rule');
     }
 }
