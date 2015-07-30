@@ -43,7 +43,6 @@ Notes:  {{$invoice->notes}}
 
 
 </br>
-<form action="/dashboard" method="get">
-    <input type="submit" value="Go back to Dashboard" 
-         name="Submit" id="submit" />
-</form>
+<br>
+<br>
+<a href="{{ url('dashboard') }}">Go back to dashboard</a>

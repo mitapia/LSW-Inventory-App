@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return redirect('invoice');
+    return redirect('dashboard');
 });
 
 Route::get('dashboard', function () {

@@ -17,8 +17,10 @@ class InvoiceController extends Controller
      */
     public function index()
     {
+        $invoices = App\Invoice::all();
+
         // Forward directly to the create page
-        return redirect('invoice/create');
+        return view('invoice.index', ['invoices' => $invoices]);
     }
 
     /**
