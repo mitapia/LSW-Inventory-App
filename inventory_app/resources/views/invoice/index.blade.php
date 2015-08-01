@@ -23,7 +23,7 @@ th, td {
 	</tr>
     @foreach($invoices as $invoice)
       <tr>
-        <td href="{{ route('invoice.show', ['id' => $invoice->id]) }}">{{$invoice->id}}</td>
+        <td><a href="{{ route('invoice.show', ['id' => $invoice->id]) }}">{{$invoice->id}}</a></td>
         <td>{{$invoice->invoice_number}}</td>
         <td>{{$invoice->vendor->name}}</td>
         <td>{{$invoice->notes}}</td>
