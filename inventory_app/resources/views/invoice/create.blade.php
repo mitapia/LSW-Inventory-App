@@ -226,10 +226,10 @@
           };
 
           //checks for empty columns
-          if (hot.countEmptyCols() > 0) {
-            alert('Failed to save. Table has empty columns.'); 
-            return false;          
-          };
+          // if (hot.countEmptyCols() > 0) {
+          //   alert('Failed to save. Table has empty columns.'); 
+          //   return false;          
+          // };
 
           // check for empty rows not at the end of the table, those will be trimed later
           if ((hot.countEmptyRows() - hot.countEmptyRows(true)) > 0) {
