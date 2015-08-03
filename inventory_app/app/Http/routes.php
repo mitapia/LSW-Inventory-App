@@ -20,3 +20,6 @@ Route::get('dashboard', function () {
 });
 
 Route::resource('invoice', 'InvoiceController');
+
+
+Route::get('view/{option}', 'OptionController@Index');
