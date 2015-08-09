@@ -29,7 +29,7 @@ Notes:  {{$invoice->notes}}
 		<th>Category</th>
 		<th>Note</th>
 	</tr>
-    @foreach($inventory as $item)
+    @foreach($invoice->inventory_prep as $item)
       <tr>
         <td>{{$item->style}}</td>
         <td>{{$item->cost}}</td>
@@ -46,3 +46,4 @@ Notes:  {{$invoice->notes}}
 <br>
 <br>
 <a href="{{ url('dashboard') }}">Go back to dashboard</a>
+

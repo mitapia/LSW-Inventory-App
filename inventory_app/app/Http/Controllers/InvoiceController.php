@@ -105,9 +105,8 @@ class InvoiceController extends Controller
     {
         // check that the invoive exists
         $invoice = App\Invoice::findOrFail($id);
-        $inventory_prep = App\Inventory_Prep::where('invoice_id', $id)->get();
 
-        return view('invoice.view', [ 'invoice' => $invoice, 'inventory' => $inventory_prep ]);
+        return view('invoice.view', [ 'invoice' => $invoice ]);
     }
 
     /**
