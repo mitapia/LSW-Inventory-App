@@ -14,7 +14,7 @@ class CreateOnlineColorsTable extends Migration
     {
         Schema::create('online__color', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 31)
+            $table->string('name', 31);
             $table->timestamps();
         });
     }

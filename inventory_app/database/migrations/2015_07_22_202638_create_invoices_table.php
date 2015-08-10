@@ -20,6 +20,7 @@ class CreateInvoicesTable extends Migration
             $table->string('notes', 255);
             $table->string('created_by', 32);
             $table->integer('vendor_id');
+            $table->boolean('open')->default(1);
             $table->timestamps();
         });
     }
