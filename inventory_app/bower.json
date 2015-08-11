@@ -1,0 +1,6 @@
+{
+  "name": "Inventory App",
+  "dependencies": {
+    "handsontable": "~0.16.1"
+  }
+}
