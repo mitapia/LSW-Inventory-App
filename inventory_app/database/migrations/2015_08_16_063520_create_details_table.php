@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOpenBoxesTable extends Migration
+class CreateDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateOpenBoxesTable extends Migration
      */
     public function up()
     {
-        Schema::create('open_box', function (Blueprint $table) {
+        Schema::create('detail', function (Blueprint $table) {
             $table->increments('id');
             $table->string('brand', 31);
             $table->integer('category_id');
@@ -28,6 +28,6 @@ class CreateOpenBoxesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('open_box');
+        Schema::drop('detail');
     }
 }

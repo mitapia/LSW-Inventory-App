@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Open_Box extends Model
+class Detail extends Model
 {
-	/**
+    /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'open_box';
+    protected $table = 'detail';
 
     /**
      * Get the Category that owns the Invetory_Prep item.
