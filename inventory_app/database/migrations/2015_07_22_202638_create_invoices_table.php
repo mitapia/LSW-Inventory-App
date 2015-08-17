@@ -15,8 +15,8 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoice', function (Blueprint $table) {
             $table->increments('id');
             $table->string('invoice_number', 32);
-            $table->tinyInteger('page_number');
-            $table->tinyInteger('total_pages');
+            $table->tinyInteger('page_number')->default(1);
+            $table->tinyInteger('total_pages')->default(1);
             $table->string('notes', 255);
             $table->string('created_by', 32);
             $table->integer('vendor_id');

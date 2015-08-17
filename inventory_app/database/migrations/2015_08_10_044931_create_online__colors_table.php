@@ -12,7 +12,7 @@ class CreateOnlineColorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('online__color', function (Blueprint $table) {
+        Schema::create('online_color', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 31);
             $table->timestamps();
@@ -26,6 +26,6 @@ class CreateOnlineColorsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('online__color');
+        Schema::drop('online_color');
     }
 }
