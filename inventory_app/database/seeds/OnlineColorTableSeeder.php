@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Online_Color;
 
 class OnlineColorTableSeeder extends Seeder
 {
@@ -30,7 +31,7 @@ class OnlineColorTableSeeder extends Seeder
 		);
 
 		foreach($colors as $color) {
-		    $online_color = Online_Color::create(array('name' => $color ));
+		    $online_color = Online_Color::create(array('name' => $color));
 		}  
     }
 }
