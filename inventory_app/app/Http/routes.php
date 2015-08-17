@@ -20,6 +20,13 @@ Route::get('dashboard', function () {
 });
 
 Route::resource('invoice', 'InvoiceController');
+Route::resource('quantity', 'QuantityController');
+Route::resource('detail', 'DetailController');
 
 
-Route::get('view/{option}', 'OptionController@Index');
+Route::resource('size_matrix', 'SizeMatrixController');
+
+//Route::resource('select', 'SizeMatrixController');
+
+
+Route::get('view/{option}', 'SelectController@Index');

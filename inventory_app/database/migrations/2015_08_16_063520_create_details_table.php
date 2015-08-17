@@ -17,6 +17,7 @@ class CreateDetailsTable extends Migration
             $table->string('brand', 31);
             $table->integer('category_id');
             $table->integer('online_color_id');
+            $table->integer('inventory_prep_id');
             $table->timestamps();
         });
     }

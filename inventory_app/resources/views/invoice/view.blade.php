@@ -19,15 +19,21 @@ page# {{$invoice->page_number}} of {{$invoice->total_pages}} pages
 
 </br>
 Notes:  {{$invoice->notes}}
-</br></br></br>
+</br></br>
+
+Status: @if ($invoice->open)
+    Open
+@else
+    Close
+@endif
+</br>
 <table style="width:100%">
 	<tr>
 		<th>Style</th>
 		<th>Cost</th>
 		<th>Size</th>
 		<th>Department</th>
-		<th>Category</th>
-		<th>Note</th>
+		<th>Color</th>
 	</tr>
     @foreach($invoice->inventory_prep as $item)
       <tr>
@@ -35,8 +41,7 @@ Notes:  {{$invoice->notes}}
         <td>{{$item->cost}}</td>
         <td>{{$item->size_matrix->name}}</td>
         <td>{{$item->department->name}}</td>
-        <td>{{$item->category->name}}</td>
-        <td>{{$item->notes}}</td>
+        <td>{{$item->color}}</td>
       </tr>
     @endforeach
 </table>
@@ -46,4 +51,9 @@ Notes:  {{$invoice->notes}}
 <br>
 <br>
 <a href="{{ url('dashboard') }}">Go back to dashboard</a>
+
+
+<br>
+<a href="{{ route('detail.create', [ 'id' => $invoice->id ]) }}">Enter Inventory Details</a>
+<a href="{{ route('quantity.create', [ 'id' => $invoice->id ]) }}">Enter Available Quantity</a>
 
