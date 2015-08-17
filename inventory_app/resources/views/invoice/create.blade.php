@@ -9,16 +9,27 @@
 @section('title', 'Invoice')
 
 
+@if (count($errors) > 0)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 @section('content')
 </br>
 <div class="row">
   <div class="col-md-8">
 	<label for="vendor">Vendor:</label>
-	<select name="vendor" id="vendor">
+	<select name="vendor" id="vendor" onchange="loadSizeData(this)">
+      <option disabled selected> -- Select a Vendor -- </option>
     @foreach($vendors as $vendor)
       <option value="{{$vendor->id}}">{{$vendor->name}}</option>
     @endforeach
-  	</select></br>
+  </select></br>
 
 	<label for="invoice_number:">Invoice ID:</label>
 	<input type="text" id="invoice_number" name="invoice_number"/></br>
@@ -31,26 +42,106 @@
 	<textarea name="notes" id="notes" rows="10" cols="30"></textarea>
   </div>
 	</br>
-	<button name="save" id="save" data="#inventory" data-instance="hotInstance">Save</button>
+	<button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
 	
 
 </div>
+<p id="msg"></p>
 
+Last line in the table is the only empty line allowed at time of submit and will not be saved.
 <hr>
 <meta name="csrf_token" content="{{ csrf_token() }}" />
 
 <!-- Table -->
-<div id="inventory"</div>
+<div id="invoice"</div>
 
 <script>
-  // Instead of creating a new Handsontable instance
-  // with the container element passed as an argument,
-  // you can simply call .handsontable method on a jQuery DOM object.
-  var $container = $("#inventory");
+var changedData;
+var formatedData;
+
+  function loadSizeData (selected) {
+    $.ajax({
+      method: "GET",
+      url: "{{ url('size_matrix').'/' }}"+selected.value,
+      success: function (data) {
+        //console.log('returned' + data)
+        //changedData = JSON.parse(data);
+
+        formatedData = $.map(data, function(el, i) { 
+          console.log(el.name);
+          console.log(i);
+
+          return el.name; 
+        });
+
+        table_col_settings[2] ={
+        data: 'size',
+        type: 'dropdown',
+            source: formatedData
+            };
+        
+        hotInstance.updateSettings({
+          columns:table_col_settings,
+          cells: function (row, col, prop) {
+            var cellProperties = {};
+
+            cellProperties.readOnly = false;
+
+            return cellProperties;
+          }
+        });
+        hotInstance.clear();
+      },
+      beforeSend: function (xhr) {
+            // needed to get pass auth middleware   
+            var token = $('meta[name="csrf_token"]').attr('content');
+
+            if (token) {
+              return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+            }
+      }
+    });
+  }
+
+
+
+
+
+
+var table_col_settings = [
+      {
+        data: 'style', 
+      },
+      { 
+        data: 'cost',
+        type: 'numeric',
+        format: '$0,0.00',
+        language: 'en'
+       },
+      {
+        data: 'size', 
+        type: 'dropdown',
+        //source: sizeMatrixData
+      },
+      {
+        data: 'department', 
+        type: 'dropdown',
+        source: [
+      @foreach($departments as $department)
+            '{{$department->name}}',
+          @endforeach
+        ]
+      },
+      {
+        data: 'color', 
+      }
+    ]
+
+  var $container = $("#invoice");
 
   $container.handsontable({
-    data: [],    // must be define for dataSchema to work and return data as Objects
-    dataSchema: {style: null, cost: null, size: null, department: null, category: null, note: null}, 
+    data: [{style: 'Must first select Vendor'}],    // must be define for dataSchema to work and return data as Objects
+    dataSchema: {style: null, cost: null, size: null, department: null, color: null}, 
 
     rowHeaders: true,
     colHeaders: true,
@@ -62,52 +153,16 @@
     
     manualColumnResize: true,
     manualRowResize: true,
-    colWidths: [120, 80, 70, 120, 120, 250],
-    colHeaders: ['Style', 'Cost', 'Size', 'Department', 'Category', 'Note'],
+    colWidths: [160, 90, 90, 150, 150],
+    colHeaders: ['Style', 'Cost', 'Size', 'Department', 'Color'],
 
-    columns: [
-      {
-        data: 'style', 
-      },
-      { 
-      	data: 'cost',
-      	type: 'numeric',
-        format: '$0,0.00',
-        language: 'en'
-       },
-      {
-        data: 'size', 
-        type: 'dropdown',
-        source: [
-		  @foreach($sizes as $size)
-            '{{$size->name}}',
-          @endforeach
-        ]
-      },
-      {
-        data: 'department', 
-        type: 'dropdown',
-        source: [
-		  @foreach($departments as $department)
-            '{{$department->name}}',
-          @endforeach
-        ]
-      },
-      { 
-      	data: 'category',
-      	type: 'dropdown',
-        source: [
-		  @foreach($categories as $category)
-            '{{$category->name}}',
-          @endforeach
-        ]
-      },
-      {
-        data: 'note', 
-      }
-    ],
-    cells: function () {
-          
+    columns: table_col_settings,
+    cells: function (row, col, prop) {
+      var cellProperties = {};
+
+      cellProperties.readOnly = true;
+
+      return cellProperties;
     },
     // Validation on check will occur on the entire table and will aler if fail
     afterDeselect: function (callback) {
@@ -158,7 +213,7 @@
 
 
   // This way, you can access Handsontable api methods by passing their names as an argument, e.g.:
-  var hotInstance = $("#inventory").handsontable('getInstance');
+  var hotInstance = $("#invoice").handsontable('getInstance');
 
 
   (function () {
@@ -221,7 +276,8 @@
         beforeSend: function (xhr) {
           // checks for an empty table
           if (hot.countRows() == hot.countEmptyRows()) { 
-            alert('Failed to save. Table has no data.'); 
+            alert('Failed to save. Table has no data.');
+            document.getElementById("msg").innerHTML = 'Table is empty.'
             return false;
           };
 
@@ -267,12 +323,18 @@
         },
 
         error:function(data){
-          // ** turn this into alert
-          alert('There was an error with the submit, please check your data and try again. If problem persist contact Developoment team.');
+          var jsMsg = "";
+          var htmlMsg = "";
+          for(var error in data.responseJSON) {
+            jsMsg += data.responseJSON[error] + '\n';
+            htmlMsg += data.responseJSON[error] + '<br>';
+          }
+          alert('There was an error with the submit, please check your data and try again. If problem persist contact Developoment team.\n \n '+ jsMsg);
+          document.getElementById("msg").innerHTML = htmlMsg;
         }
       })
     } 
-  })();        
+  })();      
 </script>
 
 

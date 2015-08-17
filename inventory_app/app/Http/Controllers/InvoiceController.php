@@ -17,7 +17,8 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = App\Invoice::all();
+        // Show all OPEN invoices
+        $invoices = App\Invoice::where('open', true)->get();
 
         // Forward directly to the create page
         return view('invoice.index', ['invoices' => $invoices]);
@@ -32,13 +33,11 @@ class InvoiceController extends Controller
     {
         $sizes = App\Size_Matrix::all();
         $departments = App\Department::all();
-        $categories = App\Category::all();
         $vendors = App\Vendor::all();
 
         return view('invoice.create', [ 
             'sizes' => $sizes, 
             'departments' => $departments, 
-            'categories' => $categories,
             'vendors' => $vendors
         ]);
     }
@@ -54,6 +53,27 @@ class InvoiceController extends Controller
         // Dump all data into $data
         $data = $request->all();
 
+        // Validate submited data
+        $this->validate($request, [
+            'form.vendor' => 'required|exists:vendor,id',
+            'form.invoice_number' => 'required|max:32',
+            'form.page_number' => 'required|numeric|min:1|max:'.$data['form']['page_total'],
+            'form.page_total' => 'required|numeric|min:1',
+            'form.notes' => 'max:255',
+        ]);
+
+        // loops through table contents to Validate
+        for ($i=0; $i < (count($data['table']) - 1); $i++) { 
+            $this->validate($request, [
+                'table.'.$i.'.style' => 'required|max:32',
+                'table.'.$i.'.cost' => 'required|numeric',
+                'table.'.$i.'.size' => 'required|exists:size_matrix,name,vendor_id,'.$data['form']['vendor'],
+                'table.'.$i.'.department' => 'required|exists:department,name',
+                'table.'.$i.'.color' => 'required|max:12',
+            ]);
+        };
+            
+
         $invoice = new App\Invoice;
 
         $invoice->invoice_number  = $data['form']['invoice_number'];
@@ -61,7 +81,7 @@ class InvoiceController extends Controller
         $invoice->total_pages    = $data['form']['page_total'];
         $invoice->notes           = $data['form']['notes'];
 
-        $invoice->created_by      = 'test001';
+        $invoice->created_by      = 'staff';
         $invoice->vendor_id       = $data['form']['vendor'];
 
         $invoice->save();  
@@ -73,19 +93,17 @@ class InvoiceController extends Controller
         for ($i=0; $i < (count($data['table']) - 1); $i++) { 
             $style  = $data['table'][$i]['style'];
             $cost = $data['table'][$i]['cost'];
-            $notes  = $data['table'][$i]['note'];
+            $color  = $data['table'][$i]['color'];
             
             $department_id  = App\Department::where('name', $data['table'][$i]['department'])->firstOrFail()->id;
-            $category_id    = App\Category::where('name', $data['table'][$i]['category'])->firstOrFail()->id;
             $size_matrix_id = App\Size_Matrix::where('name', $data['table'][$i]['size'])->firstOrFail()->id;
 
             $inventory = new App\Inventory_Prep;
 
             $inventory->style       = $style;
             $inventory->cost    = $cost;
-            $inventory->notes     = $notes;
+            $inventory->color     = $color;
             $inventory->department_id     = $department_id;
-            $inventory->category_id     = $category_id;
             $inventory->invoice_id     = $last_invoice;
             $inventory->size_matrix_id     = $size_matrix_id;
 

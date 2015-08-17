@@ -8,7 +8,7 @@ use App;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class OptionController extends Controller
+class SelectController extends Controller
 {
     /**
      * Display a listing of the resource.
