@@ -23,14 +23,6 @@ class Inventory_Prep extends Model
     }
 
     /**
-     * Get the Category that owns the Invetory_Prep item.
-     */
-    public function category()
-    {
-        return $this->belongsTo('App\Category');
-    }
-
-    /**
      * Get the Invoice that owns the Invetory_Prep item.
      */
     public function invoice()
@@ -44,5 +36,21 @@ class Inventory_Prep extends Model
     public function size_matrix()
     {
         return $this->belongsTo('App\Size_Matrix');
+    }
+
+    /**
+     * Get the Quantity of the Invetory_Prep item.
+     */
+    public function quantity()
+    {
+        return $this->hasOne('App\Quantity');
+    }
+
+    /**
+     * Get the Detail of the Invetory_Prep item.
+     */
+    public function detail()
+    {
+        return $this->hasOne('App\Detail');
     }
 }

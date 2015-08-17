@@ -14,21 +14,25 @@ th, td {
 </br></br>
 <table style="width:100%">
 	<tr>
-		<th>ID</th>
 		<th>Invoice ID</th>
 		<th>Vendor</th>
-		<th>notes</th>
-		<th>Page</th>
-		<th>Created by</th>
+		<th>Notes</th>
+        <th>Page</th>
+		<th># of Items</th>
+        <th>Created by</th>
+		<th>Created date</th>
 	</tr>
     @foreach($invoices as $invoice)
       <tr>
-        <td><a href="{{ route('invoice.show', ['id' => $invoice->id]) }}">{{$invoice->id}}</a></td>
-        <td>{{$invoice->invoice_number}}</td>
+        <td><a href="{{ route('invoice.show', ['id' => $invoice->id]) }}">
+        {{$invoice->invoice_number}} 
+        </a></td>
         <td>{{$invoice->vendor->name}}</td>
         <td>{{$invoice->notes}}</td>
         <td>{{$invoice->page_number}} of {{$invoice->total_pages}}</td>
+        <td>{{count($invoice->inventory_prep)}}</td>
         <td>{{$invoice->created_by}}</td>
+        <td>{{$invoice->created_at}}</td>
       </tr>
     @endforeach
 </table>

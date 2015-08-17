@@ -78,7 +78,7 @@ class InvoiceController extends Controller
 
         $invoice->invoice_number  = $data['form']['invoice_number'];
         $invoice->page_number     = $data['form']['page_number'];
-        $invoice->total_pages    = $data['form']['page_total'];
+        $invoice->total_pages     = $data['form']['page_total'];
         $invoice->notes           = $data['form']['notes'];
 
         $invoice->created_by      = 'staff';
