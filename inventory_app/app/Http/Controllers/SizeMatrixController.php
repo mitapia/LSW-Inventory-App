@@ -17,7 +17,8 @@ class SizeMatrixController extends Controller
      */
     public function index()
     {
-        //
+        $matices = App\Size_Matrix::all();
+        return view ('size_matrix.index', ['matices' => $matices]);
     }
 
     /**
@@ -87,7 +88,7 @@ class SizeMatrixController extends Controller
                     $matrix->{$i.'_K'} = (empty($qty)) ? '0' : $qty;
                 }
                 for ($i=0; $i <= 14; $i += 0.5) { 
-                    $name = str_replace('.', '_', strval($i));
+                    $name = str_replace('.', '_', strval($i)) . '_A';
                     $qty = $data['table'][$r][$name];
                     $matrix->{$name} = (empty($qty)) ? '0' : $qty;
                 }

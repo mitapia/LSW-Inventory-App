@@ -17,31 +17,28 @@
 
 
 @section('content')
-</br>
 <div class="row">
-
-<form>
-  <ul class="checkbox-grid">
-    @foreach($vendors as $vendor)
-      <li><input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/><label for="{{$vendor->id}}">{{$vendor->name}}</label></li>
-    @endforeach
-  </ul>
-</form>
-
+  <form>
+    <ul class="checkbox-grid">
+      @foreach($vendors as $vendor)
+        <li><input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/><label for="{{$vendor->id}}">{{$vendor->name}}</label></li>
+      @endforeach
+    </ul>
+  </form>
 </div>
-	</br></br></br>
-	<button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
-	
 
+<div class="row">
+  <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
+  <p id="msg"></p>
+  Last line in the table is the only empty line allowed at time of submit and will not be saved.
+</div>
 
-<p id="msg"></p>
-
-Last line in the table is the only empty line allowed at time of submit and will not be saved.
-<hr>
-<meta name="csrf_token" content="{{ csrf_token() }}" />
-
-<!-- Table -->
-<div id="invoice"</div>
+<div class="row">
+  <hr>
+  <meta name="csrf_token" content="{{ csrf_token() }}" />
+  <!-- Table -->
+  <div id="invoice"</div>
+</div>
 
 <script>
   var table_col_settings = [
@@ -56,7 +53,7 @@ Last line in the table is the only empty line allowed at time of submit and will
     @endfor
     @for ($i = 0; $i <= 14; $i+=0.5)
       {
-        data: '{{str_replace('.', '_', strval($i))}}',
+        data: '{{ str_replace('.', '_', strval($i)) . '_A' }}',
         type: 'numeric'
       },
     @endfor
@@ -73,7 +70,7 @@ Last line in the table is the only empty line allowed at time of submit and will
       @endfor
       @for ($i = 0; $i <= 14; $i+=0.5)
         {{-- for some reason it will not allow a single number as name, adding '_' to bypass problem --}}
-        '{{str_replace('.', '_', strval($i))}}': null,
+        '{{ str_replace('.', '_', strval($i)) . '_A' }}': null,
       @endfor
     }, 
 
@@ -276,8 +273,6 @@ Last line in the table is the only empty line allowed at time of submit and will
     } 
   })();      
 </script>
-
-
 
 
 

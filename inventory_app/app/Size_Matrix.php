@@ -20,4 +20,12 @@ class Size_Matrix extends Model
     {
         return $this->hasMany('App\Inventory_Prep');
     }
+
+    /**
+     * Get the Vendor that owns the size_matrix.
+     */
+    public function vendor()
+    {
+        return $this->belongsTo('App\Vendor');
+    }
 }

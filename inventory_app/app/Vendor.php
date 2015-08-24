@@ -28,4 +28,12 @@ class Vendor extends Model
     {
         return $this->hasMany('App\Invoice');
     }  
+
+    /**
+     * Get the size_matrix for the vendor.
+     */
+    public function size_matrix()
+    {
+        return $this->hasMany('App\Size_Matrix');
+    }
 }

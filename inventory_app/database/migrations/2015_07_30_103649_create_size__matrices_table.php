@@ -21,7 +21,8 @@ class CreateSizeMatricesTable extends Migration
             }
             for ($i=0; $i <= 14; $i += 0.5) { 
                 // Having problems with '.' replacing for underscore to let migration finish
-                $name = str_replace('.', '_', strval($i));
+                // Also having problems accessing colums when assessing lone digits, a mysql limitation
+                $name = str_replace('.', '_', strval($i)) . '_A';
                 $table->tinyInteger($name)->default(0)->unsigned();
             }
             $table->timestamps();
