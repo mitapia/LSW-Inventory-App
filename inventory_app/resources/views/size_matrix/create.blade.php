@@ -3,6 +3,7 @@
 @section('head')
 	{{-- This is required by any page that will use the Handsontable --}}
 	@include('include.table_heads')
+  <script src="http://docs.handsontable.com/0.16.1/bower_components/chroma-js/chroma.min.js"></script>
 @endsection
 
   <style type="text/css">
@@ -41,23 +42,27 @@
 </div>
 
 <script>
-  var table_col_settings = [
+  var heatmap = [],
+  heatmapScale = chroma.scale(['#FFFFFF', '#8BC34A']),
+  table_col_settings = [
     {
       data: 'name', 
     },
     @for ($i = 0; $i <= 13; $i++)
       {
         data: '{{$i}}_K',
-        type: 'numeric'
+        type: 'numeric',
+        renderer: heatmapRenderer
       },
     @endfor
     @for ($i = 0; $i <= 14; $i+=0.5)
       {
         data: '{{ str_replace('.', '_', strval($i)) . '_A' }}',
-        type: 'numeric'
+        type: 'numeric',
+        renderer: heatmapRenderer
       },
     @endfor
-  ]
+  ];
 
   var $container = $("#invoice");
 
@@ -118,6 +123,7 @@
     afterChange: function (change, source) {
 
     },
+    beforeChangeRender: updateHeatmap,
     // change [[row, prop, oldVal, newVal], ...]
     // string "alter", "empty", "edit", "populateFromArray", "loadData", "autofill", "paste"  
     beforeChange: function (change, source) {
@@ -162,6 +168,44 @@
   // This way, you can access Handsontable api methods by passing their names as an argument, e.g.:
   var hotInstance = $("#invoice").handsontable('getInstance');
 
+
+  function updateHeatmap(change, source) {
+      console.log(change);
+    if (change) {
+      heatmap[change[0][0]] = generateHeatmapData.call(this, change[0][0]);
+    } else {
+      heatmap = [];
+  
+      for(var i = 0, rowCount = this.countRows(); i < rowCount ; i++) {
+        heatmap[i] = generateHeatmapData.call(this, i);
+          console.log(heatmap[i]);
+      }
+    }
+  }
+  
+  function point(min, max, value) {
+    return (value - min) / (max - min);
+  }
+  
+  function generateHeatmapData(rowId) {
+    var values = this.getDataAtRow(rowId);
+      console.log('values before splice: ' + values);
+    values.splice(0, 1);
+      console.log('After splice: ' + values);
+    return {
+      min: Math.min.apply(null, values),
+      max: Math.max.apply(null, values)
+    };
+  }
+  
+  function heatmapRenderer(instance, td, row, col, prop, value, cellProperties) {
+    Handsontable.renderers.TextRenderer.apply(this, arguments);
+  
+    if (heatmap[row]) {
+      td.style.backgroundColor = heatmapScale(point(heatmap[row].min, heatmap[row].max, parseInt(value, 10))).hex();
+      td.style.textAlign = 'right';
+    }
+  }
 
   (function () {
     function bindButtons() {
