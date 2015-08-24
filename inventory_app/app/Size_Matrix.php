@@ -20,5 +20,4 @@ class Size_Matrix extends Model
     {
         return $this->hasMany('App\Inventory_Prep');
     }
-
 }

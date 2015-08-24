@@ -15,11 +15,15 @@ class CreateSizeMatricesTable extends Migration
         Schema::create('size_matrix', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 30);
-            for ($i=0; $i <= 16; $i += 0.5) { 
+            $table->tinyInteger('vendor_id')->unsigned();
+            for ($i=0; $i <= 13; $i++) { 
+                $table->tinyInteger($i.'_K')->default(0)->unsigned();
+            }
+            for ($i=0; $i <= 14; $i += 0.5) { 
                 // Having problems with '.' replacing for underscore to let migration finish
                 $name = str_replace('.', '_', strval($i));
-                $table->tinyInteger($name);
-            };
+                $table->tinyInteger($name)->default(0)->unsigned();
+            }
             $table->timestamps();
         });
     }
