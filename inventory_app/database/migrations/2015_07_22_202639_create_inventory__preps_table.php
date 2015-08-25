@@ -23,6 +23,7 @@ class CreateInventoryPrepsTable extends Migration
             $table->integer('size_matrix_id');
             $table->boolean('detail_set')->default(0);
             $table->boolean('quantity_set')->default(0);
+            $table->boolean('delivered')->default(0);
             $table->integer('invoice_vendor_id');   // not sure if this is neccesary
             $table->timestamps();
         });

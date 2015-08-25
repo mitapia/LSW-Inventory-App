@@ -23,10 +23,12 @@ Route::resource('invoice', 'InvoiceController');
 Route::resource('quantity', 'QuantityController');
 Route::resource('detail', 'DetailController');
 
-
 Route::resource('size_matrix', 'SizeMatrixController');
+Route::resource('export', 'ExportController');
+Route::resource('delivered', 'DeliveredController');
 
 //Route::resource('select', 'SizeMatrixController');
 
 
 Route::get('view/{option}', 'SelectController@Index');
+Route::get('dd', 'DDController@index');
