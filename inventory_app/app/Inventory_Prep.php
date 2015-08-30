@@ -73,6 +73,7 @@ class Inventory_Prep extends Model
         // reset invebtory count
         $inventory = 0;
         $colums = [];
+
         $item = $query->find($id);
 
         // fill the array with the column names
@@ -86,37 +87,32 @@ class Inventory_Prep extends Model
             array_push($colums, $name);
         }        
 
-        $matrix = Size_Matrix::where('id', $item->size_matrix_id)->get($colums)->toArray();
+        //$matrix = Size_Matrix::where('id', $item->size_matrix_id)->get($colums)->toArray();
+        $matrix = Size_Matrix::nonZeroColumns($item->size_matrix_id);
 
         // loop through the columns
         foreach ($matrix[0] as $key => $value) {
-            // the size run consists of all that are not zero
-            if ($value > 0) {
-                // must convert key to proper format (ex. '5_5_A' => '5.5')
-                if (strrpos($key, '_A')) {
-                    // remove trailing '_A'
-                    $trimed = rtrim($key, '_A');
-                    // convert '_' to decimal
-                    $size = str_replace('_', '.', strval($trimed));
-                } else {
-                    //  '_K' should not need any addtional formating
-                    $size = $key;
-                }
-                $inventory = QB_Inventory::where('style', $item->style)
-                                         ->where('color', $item->color)
-                                         ->where('size', $size)
-                                         ->count();
-                if ($inventory > 0) {
-                    //return $item;
-                    return array(
-                        'status' => 'true', 
-                        'info' => 'Style: '.$item->style.', Color: '.$item->color.', Size: '.$size
-                    );
-                }                                         
-            }   
+            // must convert key to proper format (ex. '5_5_A' => '5.5')
+            if (strrpos($key, '_A')) {
+                // remove trailing '_A'
+                $trimed = rtrim($key, '_A');
+                // convert '_' to decimal
+                $size = str_replace('_', '.', strval($trimed));
+            } else {
+                //  '_K' should not need any addtional formating
+                $size = $key;
+            }
+            $inventory = QB_Inventory::where('style', $item->style)
+                                     ->where('color', $item->color)
+                                     ->where('size', $size)
+                                     ->count();
+            if ($inventory > 0) {
+                return array(
+                    'status' => 'true', 
+                    'info' => 'Style: '.$item->style.', Color: '.$item->color.', Size: '.$size
+                );
+            }
         }
-
-
         return array('status' => 'false');
     }
 }
