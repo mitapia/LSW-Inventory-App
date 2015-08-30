@@ -39,4 +39,17 @@ class Invoice extends Model
 
         return $query->orderBy('created_at', 'desc')->firstorFail();
     }
+
+    /**
+     * Scope a query to only include open invoices.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOpen($query)
+    {
+
+        return $query->where('open', true);
+    }
+
+
 }

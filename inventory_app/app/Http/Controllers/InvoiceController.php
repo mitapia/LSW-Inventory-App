@@ -18,7 +18,7 @@ class InvoiceController extends Controller
     public function index()
     {
         // Show all OPEN invoices
-        $invoices = App\Invoice::where('open', true)->get();
+        $invoices = App\Invoice::open()->get();
 
         // Forward directly to the create page
         return view('invoice.index', ['invoices' => $invoices]);
