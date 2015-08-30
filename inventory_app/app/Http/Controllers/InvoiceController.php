@@ -101,11 +101,11 @@ class InvoiceController extends Controller
             $inventory = new App\Inventory_Prep;
 
             $inventory->style       = $style;
-            $inventory->cost    = $cost;
-            $inventory->color     = $color;
-            $inventory->department_id     = $department_id;
-            $inventory->invoice_id     = $last_invoice;
-            $inventory->size_matrix_id     = $size_matrix_id;
+            $inventory->cost        = $cost;
+            $inventory->color       = $color;
+            $inventory->department_id   = $department_id;
+            $inventory->invoice_id      = $last_invoice;
+            $inventory->size_matrix_id  = $size_matrix_id;
 
             $inventory->save();
         }
