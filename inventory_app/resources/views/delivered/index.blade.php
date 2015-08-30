@@ -16,7 +16,7 @@
 		</tr>
 	    @foreach($invoices as $invoice)
 	    	@foreach($invoice->inventory_prep as $item)
-	    		@unless($item->delivered)
+	    		@unless($item->delivered or $item->reorder)
 	      <tr>
 	        <td><input type="checkbox" name="delivered" value="{{ $item->id }}"></td>
 	        <td>{{$item->style}}</td>
@@ -45,7 +45,7 @@
 		    	selected.push($(this).val());
 		    }
 		);
-		console.log(selected)
+		//console.log(selected)
 
 	    $.ajax({
 	        type:"post",
@@ -54,7 +54,7 @@
 	            checkbox: selected,
 	            },
 	        success:function(msg){
-	            //console.log(msg);
+	            console.log(msg);
 	            location.reload();
 	            },
 	        beforeSend: function (xhr) {

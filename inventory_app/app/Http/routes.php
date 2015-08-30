@@ -15,9 +15,7 @@ Route::get('/', function () {
     return redirect('dashboard');
 });
 
-Route::get('dashboard', function () {
-    return view('dashboard');
-});
+Route::controller('dashboard', 'DashboardController');
 
 Route::resource('invoice', 'InvoiceController');
 Route::resource('quantity', 'QuantityController');

@@ -17,7 +17,7 @@ class DeliveredController extends Controller
      */
     public function index()
     {
-        $open_invoices = App\Invoice::where('open', true)->get();
+        $open_invoices = App\Invoice::open()->get();
 
         return view('delivered.index', ['invoices' => $open_invoices]);
     }
@@ -42,18 +42,41 @@ class DeliveredController extends Controller
     {
         $delivered = $request->all();
 
-        // foreach ($delivered as $id) {
-        //     $inventory = App\Inventory_Prep::find($id);
+        if (empty($delivered)) {
+             return 'No item was selected';
+        }
 
-        //     $inventory->delivered = true;
+        /**
+         *  Validations
+         * 
+         *  - Make sure id exists and is numeric
+         *  - Chekc if item is a reorder
+         *  
+         *  Reoder - to determine a reoder must check for existence of particular item in current inventory
+         *  Unique itme - a unique combination of 3 specific fields: style(Item Name), color(Attribute), size
+         *
+        */
+        for ($i=0; $i < count($delivered['checkbox']); $i++) { 
+            $this->validate($request, [
+                'checkbox.'.$i  =>  'required|numeric|exists:inventory_prep,id',
+            ]);  
+        }
 
-        //     $inventory->save();            
-        // }
+        foreach ($delivered['checkbox'] as $item) {
+            $exists = App\Inventory_Prep::existsInInventory($item);
+            if ($exists['status']  == 'true') {
+                // must mark item for reorder
+                  App\Inventory_Prep::where('id', $item)
+                                    ->update(['reorder' => true]);      
+                return json_encode('Item '.$exists['info'].' exists. Setting Item as Re-Order.');
+            }
+        }
+        
         App\Inventory_Prep::whereIn('id', $delivered['checkbox'])
           ->update(['delivered' => true]);
 
-
-        return json_encode($delivered['checkbox']);
+        //** this must be change to a success json
+        return json_encode('success');
     }
 
     /**
