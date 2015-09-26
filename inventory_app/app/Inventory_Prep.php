@@ -52,7 +52,7 @@ class Inventory_Prep extends Model
      */
     public function quantity()
     {
-        return $this->hasOne('App\Quantity');
+        return $this->hasOne('App\Quantity', 'inventory_prep_id');
     }
 
     /**
@@ -60,7 +60,7 @@ class Inventory_Prep extends Model
      */
     public function detail()
     {
-        return $this->hasOne('App\Detail');
+        return $this->hasOne('App\Detail', 'inventory_prep_id');
     }
 
     /**
@@ -91,7 +91,7 @@ class Inventory_Prep extends Model
         $matrix = Size_Matrix::nonZeroColumns($item->size_matrix_id);
 
         // loop through the columns
-        foreach ($matrix[0] as $key => $value) {
+        foreach ($matrix as $key => $value) {
             // must convert key to proper format (ex. '5_5_A' => '5.5')
             if (strrpos($key, '_A')) {
                 // remove trailing '_A'

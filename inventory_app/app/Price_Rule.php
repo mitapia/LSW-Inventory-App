@@ -18,7 +18,7 @@ class Price_Rule extends Model
      */
     public function department()
     {
-        return $this->belongsToMany('App\Department')->withTimestamps();
+        return $this->belongsToMany('App\Department', 'department_price_rule', 'price_rule_id')->withTimestamps();
     }    
 
     /**
@@ -26,7 +26,7 @@ class Price_Rule extends Model
      */
     public function category()
     {
-        return $this->belongsToMany('App\Category')->withTimestamps();
+        return $this->belongsToMany('App\Category', 'category_price_rule', 'price_rule_id')->withTimestamps();
     }    
 
     /**
@@ -34,6 +34,47 @@ class Price_Rule extends Model
      */
     public function vendor()
     {
-        return $this->belongsToMany('App\Vendor')->withTimestamps();
+        return $this->belongsToMany('App\Vendor', 'price_rule_vendor', 'price_rule_id')->withTimestamps();
+    }
+
+    /**
+     * Scope a query to find the colums with non zero values
+     *
+     * @return array(
+     *          $item_desctiption, 
+     *          $regular_price
+     *          $custom_1
+     *          $custom_2
+     *          $custom_3
+     *          $custom_4
+     *          $rewards
+     *         )
+     */
+    public function scopeGenerate($inventory_id)
+    {
+        // retrive info of item
+        $item = Inventory_prep::find($inventory_id);
+        
+        // select appropriate rule to use
+        $rule = App\Price_Rule::where('minimum_cost', '<=', $item->cost)
+                        ->where('maximum_cost', '>=', $item->cost)
+                        ->orderBy('priority')
+
+                        ->has('department')
+                        ->has('category')
+                        ->has('')
+
+                        ->first();
+
+        $generated = array(
+            'item_desctiption' => $rule->item_desctiption,
+            'regular_price' => $rule->regular_price, 
+            'custom_1' => $rule->custom_price_1, 
+            'custom_2' => $rule->custom_price_2,
+            'custom_3' => $rule->custom_price_3,
+            'custom_4' => $rule->custom_price_4,
+            'rewards' => $rule->rewards
+        );
+        return $generated;
     }
 }

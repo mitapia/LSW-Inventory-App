@@ -24,6 +24,7 @@ Route::resource('detail', 'DetailController');
 Route::resource('size_matrix', 'SizeMatrixController');
 Route::resource('export', 'ExportController');
 Route::resource('delivered', 'DeliveredController');
+Route::resource('price_rule', 'PriceRuleController');
 
 //Route::resource('select', 'SizeMatrixController');
 

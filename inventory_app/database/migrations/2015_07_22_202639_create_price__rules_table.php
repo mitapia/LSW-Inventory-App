@@ -16,6 +16,15 @@ class CreatePriceRulesTable extends Migration
             $table->increments('id');
             $table->decimal('minimum_cost', 13, 2);
             $table->decimal('maximum_cost', 13, 2);
+
+            $table->string('item_description',  31);
+            $table->decimal('regular_price', 13, 2);
+            $table->decimal('custom_price_1', 13, 2);
+            $table->decimal('custom_price_2', 13, 2);
+            $table->decimal('custom_price_3', 13, 2);
+            $table->decimal('custom_price_4', 13, 2);
+            $table->boolean('rewards')->default(1);
+
             $table->tinyInteger('priority');
             $table->timestamps();
         });
