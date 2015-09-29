@@ -40,7 +40,7 @@ class Size_Matrix extends Model
         $colums = [];
 
         // fill the array with the column names
-        for ($i=1; $i <= 13; $i++) { 
+        for ($i=0; $i <= 13; $i++) { 
             //$colums .= ', `'.$i.'_K`';
             array_push($colums, $i.'_K');
         }
@@ -59,6 +59,6 @@ class Size_Matrix extends Model
             }
         }
 
-        return $size_range;
+        return $size_range[0];
     }
 }
