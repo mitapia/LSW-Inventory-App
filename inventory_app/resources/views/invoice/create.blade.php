@@ -2,12 +2,10 @@
 
 @section('head')
 	{{-- This is required by any page that will use the Handsontable --}}
-	@include('include.table_heads')
+	<link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
 @endsection
 
-
 @section('title', 'Invoice')
-
 
 @section('content')
   </br>
@@ -48,53 +46,55 @@
 @endsection
 
 @section('js')
-<script>
-var changedData;
-var formatedData;
+  <script src="http://handsontable.com/dist/handsontable.full.js"></script>
 
-  function loadSizeData (selected) {
-    $.ajax({
-      method: "GET",
-      url: "{{ url('size_matrix').'/' }}"+selected.value,
-      success: function (data) {
-        //console.log('returned' + data)
-        //changedData = JSON.parse(data);
+  <script>
+    var changedData;
+    var formatedData;
 
-        formatedData = $.map(data, function(el, i) { 
-          console.log(el.name);
-          console.log(i);
+    function loadSizeData (selected) {
+      $.ajax({
+        method: "GET",
+        url: "{{ url('size_matrix').'/' }}"+selected.value,
+        success: function (data) {
+          //console.log('returned' + data)
+          //changedData = JSON.parse(data);
 
-          return el.name; 
-        });
+          formatedData = $.map(data, function(el, i) { 
+            console.log(el.name);
+            console.log(i);
 
-        table_col_settings[2] ={
-        data: 'size',
-        type: 'dropdown',
-            source: formatedData
-            };
-        
-        hotInstance.updateSettings({
-          columns:table_col_settings,
-          cells: function (row, col, prop) {
-            var cellProperties = {};
+            return el.name; 
+          });
 
-            cellProperties.readOnly = false;
+          table_col_settings[2] ={
+          data: 'size',
+          type: 'dropdown',
+              source: formatedData
+              };
+          
+          hotInstance.updateSettings({
+            columns:table_col_settings,
+            cells: function (row, col, prop) {
+              var cellProperties = {};
 
-            return cellProperties;
-          }
-        });
-        hotInstance.clear();
-      },
-      beforeSend: function (xhr) {
-            // needed to get pass auth middleware   
-            var token = $('meta[name="csrf_token"]').attr('content');
+              cellProperties.readOnly = false;
 
-            if (token) {
-              return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+              return cellProperties;
             }
-      }
-    });
-  }
+          });
+          hotInstance.clear();
+        },
+        beforeSend: function (xhr) {
+              // needed to get pass auth middleware   
+              var token = $('meta[name="csrf_token"]').attr('content');
+
+              if (token) {
+                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+              }
+        }
+      });
+    }
 
 
 
@@ -329,9 +329,4 @@ var table_col_settings = [
     } 
   })();      
 </script>
-
-
-
-
-
 @endsection

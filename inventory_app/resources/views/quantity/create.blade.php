@@ -4,12 +4,10 @@
 
 @section('head')
 	{{-- This is required by any page that will use the Handsontable --}}
-	@include('include.table_heads')
+  <link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
 @endsection
 
-
 @section('title', 'Quantity')
-
 
 @section('content')
   </br>
@@ -31,6 +29,8 @@
 @endsection
 
 @section('js')
+  <script src="http://handsontable.com/dist/handsontable.full.js"></script>
+
   <script>
   	// load style data
   	var styleData = [

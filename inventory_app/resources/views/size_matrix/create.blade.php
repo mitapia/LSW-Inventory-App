@@ -2,8 +2,7 @@
 
 @section('head')
 	{{-- This is required by any page that will use the Handsontable --}}
-	@include('include.table_heads')
-  <script src="http://docs.handsontable.com/0.16.1/bower_components/chroma-js/chroma.min.js"></script>
+  <link rel="stylesheet" media="screen" href="http://handsontable.com/dist/handsontable.full.css">
 @endsection
 
   <style type="text/css">
@@ -15,7 +14,6 @@
   </style>
 
 @section('title', 'Size Matrix')
-
 
 @section('content')
   <div class="row">
@@ -43,6 +41,9 @@
 @endsection
 
 @section('js')
+  <script src="http://handsontable.com/dist/handsontable.full.js"></script>
+  <script src="http://docs.handsontable.com/0.16.1/bower_components/chroma-js/chroma.min.js"></script>
+
   <script>
     var heatmap = [],
     heatmapScale = chroma.scale(['#FFFFFF', '#8BC34A']),
