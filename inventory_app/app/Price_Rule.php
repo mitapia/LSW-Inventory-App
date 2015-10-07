@@ -50,24 +50,24 @@ class Price_Rule extends Model
      *          $rewards
      *         )
      */
-    public function scopeGenerate($inventory_id)
+    public function scopeGenerate($query, $inventory_id)
     {
         // retrive info of item
         $item = Inventory_prep::find($inventory_id);
-        
+ 
         // select appropriate rule to use
-        $rule = App\Price_Rule::where('minimum_cost', '<=', $item->cost)
+        $rule = Price_Rule::where('minimum_cost', '<=', $item->cost)
                         ->where('maximum_cost', '>=', $item->cost)
                         ->orderBy('priority')
 
                         ->has('department')
-                        ->has('category')
-                        ->has('')
+                        //->has('category')
+                        //->has('')
 
                         ->first();
 
         $generated = array(
-            'item_desctiption' => $rule->item_desctiption,
+            'item_description' => $rule->item_desctiption,
             'regular_price' => $rule->regular_price, 
             'custom_1' => $rule->custom_price_1, 
             'custom_2' => $rule->custom_price_2,

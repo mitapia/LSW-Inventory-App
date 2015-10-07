@@ -13,4 +13,9 @@ class QB_Inventory extends Model
      */
     protected $table = 'qb_inventory';
 
+    public function scopeNextAvailableId($query) 
+    {
+    	
+    	return $query->max('id');
+    }
 }

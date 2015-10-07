@@ -59,7 +59,8 @@ class ExportController extends Controller
 
         $open_invoices = App\Invoice::open()->get();
         // get starting id number
-        $current_id = App\QB_Inventory::nextAvailableId()->id;
+        $current_id = App\QB_Inventory::max('id');
+
 
         foreach ($open_invoices as $invoice) {
             $items = App\Inventory_Prep::where('invoice_id', $invoice->id)
@@ -98,11 +99,12 @@ class ExportController extends Controller
                 $sizes = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
 
                 foreach ($sizes as $size => $qty) {
+                    ++$current_id;
                     // vendor+department+itmenumber = 13 digits min
-                    $upc = sprintf("%02u%02u%09u", $item->vendor_id, $item->department_id, $current_id);
+                    $upc = sprintf("%02u%02u%09u", $item->invoice->vendor_id, $item->department_id, $current_id);
 
                     $row = array(
-                        'Item Number'       =>  $current_id++,
+                        'Item Number'       =>  $current_id,
                         'Item Name'         =>  $item->style,
                         'Department Name'   =>  $item->department->name,
                         'Department Code'   =>  $item->department_id,
