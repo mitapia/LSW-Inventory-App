@@ -1,8 +1,8 @@
-<head>
-	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-</head>
+@extends('master')
 
+@section('title', 'Delivered')
+
+@section('content')
 <form>
 	<table style="width:100%">
 		<tr>
@@ -68,3 +68,4 @@
         })
     }
 </script>
+@endsection

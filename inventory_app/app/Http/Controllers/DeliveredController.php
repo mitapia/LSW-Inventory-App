@@ -19,7 +19,7 @@ class DeliveredController extends Controller
     {
         $open_invoices = App\Invoice::open()->get();
 
-        return view('delivered.index', ['invoices' => $open_invoices]);
+        return view('delivered.index', ['invoices' => $open_invoices, 'page' => 'delivered.index']);
     }
 
     /**

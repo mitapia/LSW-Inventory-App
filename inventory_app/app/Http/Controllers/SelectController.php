@@ -11,6 +11,19 @@ use App\Http\Controllers\Controller;
 class SelectController extends Controller
 {
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $vendor_id
+     * @return Response
+     */
+    public function size($vendor_id)
+    {
+        $matries = App\Size_Matrix::where('vendor_id', $id)->get();
+
+        return $matries;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return Response

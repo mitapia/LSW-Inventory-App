@@ -27,7 +27,7 @@ class ExportController extends Controller
                                     ->where('quantity_set', true)
                                     ->where('reorder', false)
                                     ->get();
-        return view('export.index', ['items' => $items]);
+        return view('export.index', ['items' => $items, 'page' => 'export.index']);
     }
 
     /**

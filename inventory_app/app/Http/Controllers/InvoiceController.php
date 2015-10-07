@@ -21,7 +21,7 @@ class InvoiceController extends Controller
         $invoices = App\Invoice::open()->get();
 
         // Forward directly to the create page
-        return view('invoice.index', ['invoices' => $invoices]);
+        return view('invoice.index', ['invoices' => $invoices, 'page' => 'invoice.index']);
     }
 
     /**
@@ -38,7 +38,8 @@ class InvoiceController extends Controller
         return view('invoice.create', [ 
             'sizes' => $sizes, 
             'departments' => $departments, 
-            'vendors' => $vendors
+            'vendors' => $vendors,
+            'page' => 'invoice.create'
         ]);
     }
 
@@ -124,7 +125,7 @@ class InvoiceController extends Controller
         // check that the invoive exists
         $invoice = App\Invoice::findOrFail($id);
 
-        return view('invoice.view', [ 'invoice' => $invoice ]);
+        return view('invoice.view', [ 'invoice' => $invoice, 'page' => 'invoice.index' ]);
     }
 
     /**

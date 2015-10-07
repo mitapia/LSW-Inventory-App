@@ -1,3 +1,9 @@
+@extends('master')
+
+@section('title', 'Size Matrix')
+
+
+@section('content')
 <style>
 table, th, td {
     border: 1px solid black;
@@ -35,3 +41,4 @@ th, td {
       </tr>
     @endforeach
 </table>
+@endsection

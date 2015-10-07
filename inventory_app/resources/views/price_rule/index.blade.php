@@ -1,3 +1,9 @@
+@extends('master')
+
+@section('title', 'Price Rules')
+
+
+@section('content')
 <form>
 	<table style="width:100%">
 		<tr>
@@ -27,3 +33,4 @@
 
 
 </form>
+@endsection

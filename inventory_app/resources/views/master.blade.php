@@ -27,35 +27,69 @@
   </head>
 
   <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">Inventory Processing</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ url('/auth/logout') }}">Size Matix</a></li>
+                <li><a href="{{ url('/auth/logout') }}">Price Calculator</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="{{ url('/auth/logout') }}">Vendors</a></li>
+                <li><a href="{{ url('/auth/logout') }}">Categories</a></li>
+                <li><a href="{{ url('/auth/logout') }}">Departments</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">user<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{ url('/auth/logout') }}">Account Info</a></li>
+                <li><a href="{{ url('/auth/logout') }}">Change Password</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+              </ul>
+            </li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>
-      </div>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
     </nav>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li @if ($page == "dashboard") class="active" @endif><a href="{{ url('dashboard') }}">Dashboard</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li @if ($page == "invoice.index") class="active" @endif><a href="{{ route('invoice.index') }}">Invoices</a></li>
+            <li @if ($page == "invoice.create") class="active" @endif><a href="{{ route('invoice.create') }}">New Invoice</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li @if ($page == "delivered.index") class="active" @endif><a href="{{ route('delivered.index') }}">Delivered</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li @if ($page == "detail.create") class="active" @endif><a href="{{ route('detail.create') }}">Details</a></li>
+            <li @if ($page == "quantity.create") class="active" @endif><a href="{{ route('quantity.create') }}">Quantity</a></li>
+          </ul>        
+          <ul class="nav nav-sidebar">
+            <li @if ($page == "export.index") class="active" @endif><a href="{{ route('export.index') }}">Export</a></li>
+          </ul>
+        </div>
+        <!-- <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Dashboard<span class="sr-only">(current)</span></a></li>
             <li><a href="#">Export</a></li>
@@ -76,23 +110,20 @@
             <li><a href="">Vendor</a></li>
             <li><a href="">Size Matrix</a></li>
           </ul>
-        </div>
+        </div> -->
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           @yield('content')
         </div>
       </div>
-
     </div>
         
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="../../assets/js/vendor/holder.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- jQuery -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   </body>
 </html>

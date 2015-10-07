@@ -19,6 +19,10 @@ class DashboardController extends Controller
         $open_invoices = App\Invoice::open()->get();
         $vendors	= App\Vendor::has('size_matrix')->get();
 
-        return view('dashboard', [ 'invoices' => $open_invoices, 'vendors' => $vendors ]);
+        return view('dashboard', [ 
+            'invoices' => $open_invoices, 
+            'vendors' => $vendors,
+            'page' => 'dashboard'
+        ]);
     }
 }

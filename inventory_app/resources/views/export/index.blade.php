@@ -1,16 +1,23 @@
+@extends('master')
+
+@section('head')
 <style>
-table, th, td {
+/*table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
 th, td {
     padding: 5px;
     text-align: left;
-}
+}*/
 </style>
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script> <!-- online -->
+@endsection
 
 
+@section('title', 'Export')
+
+
+@section('content')
 <div><h1>All Submited Forms</h1></div>
 
 </br></br>
@@ -78,4 +85,4 @@ th, td {
         })
     }
 </script>
-
+@endsection

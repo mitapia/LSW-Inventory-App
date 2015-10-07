@@ -32,7 +32,12 @@ class DetailController extends Controller
         $colors = App\Online_Color::all();
         $cat = App\Category::all();
 
-        return view('detail.create', [ 'invoice' => $invoice, 'colors' => $colors, 'categories' => $cat ]);
+        return view('detail.create', [ 
+            'invoice' => $invoice, 
+            'colors' => $colors, 
+            'categories' => $cat,
+            'page' => 'detail.create'
+        ]);
     }
 
     /**

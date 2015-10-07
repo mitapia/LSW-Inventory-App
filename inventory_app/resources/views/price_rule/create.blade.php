@@ -1,14 +1,20 @@
+@extends('master')
+
+@section('head')
   <style type="text/css">
-	.checkbox-grid li {
-	    display: block;
-	    float: left;
-	    width: 33%;
-	}
+/*  .checkbox-grid li {
+      display: block;
+      float: left;
+      width: 33%;
+  }*/
   </style>
+@endsection
 
 
-<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+@section('title', 'Price Rules')
 
+
+@section('content')
 
 
 @if (count($errors) > 0)
@@ -91,3 +97,4 @@
 	});
   </script>
 </div>
+@endsection

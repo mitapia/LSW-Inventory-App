@@ -19,7 +19,7 @@ class PriceRuleController extends Controller
     public function index()
     {
         $rules = App\Price_Rule::get();
-        return view('price_rule.index', ['price_rules' => $rules]);
+        return view('price_rule.index', ['price_rules' => $rules, 'page' => 'settings']);
     }
 
     /**
@@ -36,7 +36,8 @@ class PriceRuleController extends Controller
         return view('price_rule.create', [
             'departments' => $departments, 
             'categories'  => $categories,
-            'vendors'     => $vendors
+            'vendors'     => $vendors,
+            'page' => 'settings'
         ]);
     }
 
@@ -58,7 +59,7 @@ class PriceRuleController extends Controller
             'wholesale_price' => 'required|numeric|min:0.01',
 
             'priority' => 'required|numeric|integer|min:1',
-            'rewards' => 'required|boolean',
+            //'rewards' => 'required|boolean',
 
             'department' => 'required|exists:department,id',
             'category' => 'required|exists:category,id',
