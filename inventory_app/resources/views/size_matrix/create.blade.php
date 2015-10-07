@@ -18,306 +18,305 @@
 
 
 @section('content')
-<div class="row">
-  <form>
-    <ul class="checkbox-grid">
-      @foreach($vendors as $vendor)
-        <li><input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/><label for="{{$vendor->id}}">{{$vendor->name}}</label></li>
-      @endforeach
-    </ul>
-  </form>
-</div>
+  <div class="row">
+    <form>
+      <ul class="checkbox-grid">
+        @foreach($vendors as $vendor)
+          <li><input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/><label for="{{$vendor->id}}">{{$vendor->name}}</label></li>
+        @endforeach
+      </ul>
+    </form>
+  </div>
 
-<div class="row">
-  <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
-  <p id="msg"></p>
-  Last line in the table is the only empty line allowed at time of submit and will not be saved.
-</div>
+  <div class="row">
+    <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
+    <p id="msg"></p>
+    Last line in the table is the only empty line allowed at time of submit and will not be saved.
+  </div>
 
-<div class="row">
-  <hr>
-  <meta name="csrf_token" content="{{ csrf_token() }}" />
-  <!-- Table -->
-  <div id="invoice"</div>
-</div>
+  <div class="row">
+    <hr>
+    <meta name="csrf_token" content="{{ csrf_token() }}" />
+    <!-- Table -->
+    <div id="invoice"></div>
+  </div>
+@endsection
 
-<script>
-  var heatmap = [],
-  heatmapScale = chroma.scale(['#FFFFFF', '#8BC34A']),
-  table_col_settings = [
-    {
-      data: 'name', 
-    },
-    @for ($i = 0; $i <= 13; $i++)
+@section('js')
+  <script>
+    var heatmap = [],
+    heatmapScale = chroma.scale(['#FFFFFF', '#8BC34A']),
+    table_col_settings = [
       {
-        data: '{{$i}}_K',
-        type: 'numeric',
-        renderer: heatmapRenderer
+        data: 'name', 
       },
-    @endfor
-    @for ($i = 0; $i <= 14; $i+=0.5)
-      {
-        data: '{{ str_replace('.', '_', strval($i)) . '_A' }}',
-        type: 'numeric',
-        renderer: heatmapRenderer
-      },
-    @endfor
-  ];
-
-  var $container = $("#invoice");
-
-  $container.handsontable({
-    data: [],    // must be define for dataSchema to work and return data as Objects
-    dataSchema: {
-      name: null,
       @for ($i = 0; $i <= 13; $i++)
-        '{{$i}}_K': null,
+        {
+          data: '{{$i}}_K',
+          type: 'numeric',
+          renderer: heatmapRenderer
+        },
       @endfor
       @for ($i = 0; $i <= 14; $i+=0.5)
-        {{-- for some reason it will not allow a single number as name, adding '_' to bypass problem --}}
-        '{{ str_replace('.', '_', strval($i)) . '_A' }}': null,
+        {
+          data: '{{ str_replace('.', '_', strval($i)) . '_A' }}',
+          type: 'numeric',
+          renderer: heatmapRenderer
+        },
       @endfor
-    }, 
+    ];
 
-    rowHeaders: true,
-    colHeaders: true,
-    contextMenu: true,
-    fixedColumnsLeft: 1,    
-    manualColumnFreeze: true,
-    undo: true,
+    var $container = $("#invoice");
 
-    startRows: 5,
-    minSpareRows: 1,
-    
-    manualColumnResize: true,
-    manualRowResize: true,
+    $container.handsontable({
+      data: [],    // must be define for dataSchema to work and return data as Objects
+      dataSchema: {
+        name: null,
+        @for ($i = 0; $i <= 13; $i++)
+          '{{$i}}_K': null,
+        @endfor
+        @for ($i = 0; $i <= 14; $i+=0.5)
+          {{-- for some reason it will not allow a single number as name, adding '_' to bypass problem --}}
+          '{{ str_replace('.', '_', strval($i)) . '_A' }}': null,
+        @endfor
+      }, 
 
-    viewportColumnRenderingOffset: 30,
-    colWidths: [160, 
-      @for ($i = 0; $i < 50; $i++)
-        45,
-      @endfor
-    ],
-    colHeaders: [
-      'Name',
-      @for ($i = 0; $i <= 13; $i++)
-        '{{$i}}_K',
-      @endfor
-      @for ($i = 0; $i <= 14; $i+=0.5)
-        '{{$i}}',
-      @endfor
+      rowHeaders: true,
+      colHeaders: true,
+      contextMenu: true,
+      fixedColumnsLeft: 1,    
+      manualColumnFreeze: true,
+      undo: true,
+
+      startRows: 5,
+      minSpareRows: 1,
+      
+      manualColumnResize: true,
+      manualRowResize: true,
+
+      viewportColumnRenderingOffset: 30,
+      colWidths: [160, 
+        @for ($i = 0; $i < 50; $i++)
+          45,
+        @endfor
       ],
+      colHeaders: [
+        'Name',
+        @for ($i = 0; $i <= 13; $i++)
+          '{{$i}}_K',
+        @endfor
+        @for ($i = 0; $i <= 14; $i+=0.5)
+          '{{$i}}',
+        @endfor
+        ],
 
-    columns: table_col_settings,
-    // cells: function (row, col, prop) {
-    //   var cellProperties = {};
+      columns: table_col_settings,
+      // cells: function (row, col, prop) {
+      //   var cellProperties = {};
 
-    //   cellProperties.readOnly = true;
+      //   cellProperties.readOnly = true;
 
-    //   return cellProperties;
-    // },
-    // Validation on check will occur on the entire table and will aler if fail
-    afterDeselect: function (callback) {
+      //   return cellProperties;
+      // },
+      // Validation on check will occur on the entire table and will aler if fail
+      afterDeselect: function (callback) {
 
-    },
-    afterChange: function (change, source) {
+      },
+      afterChange: function (change, source) {
 
-    },
-    beforeChangeRender: updateHeatmap,
-    // change [[row, prop, oldVal, newVal], ...]
-    // string "alter", "empty", "edit", "populateFromArray", "loadData", "autofill", "paste"  
-    beforeChange: function (change, source) {
-      // this will limit size of ALL cells
-      var sizelimit = 120;
+      },
+      beforeChangeRender: updateHeatmap,
+      // change [[row, prop, oldVal, newVal], ...]
+      // string "alter", "empty", "edit", "populateFromArray", "loadData", "autofill", "paste"  
+      beforeChange: function (change, source) {
+        // this will limit size of ALL cells
+        var sizelimit = 120;
 
-      //** Need to limit size of line that can be paste in
+        //** Need to limit size of line that can be paste in
 
-      // Makes sure that the string is below size limit designated
-      for (var i = 0; i < change.length; i++) {
-        var newVal = change[i][3];
+        // Makes sure that the string is below size limit designated
+        for (var i = 0; i < change.length; i++) {
+          var newVal = change[i][3];
 
-        if ( newVal.length >= sizelimit ) {
-          change[i][3] = newVal.substr(0, sizelimit);
-          //** Alert user that size limit has bee exceeded
+          if ( newVal.length >= sizelimit ) {
+            change[i][3] = newVal.substr(0, sizelimit);
+            //** Alert user that size limit has bee exceeded
+          }
+
+
+        };
+
+      }
+    });
+
+    // buttons check for array(null)
+
+
+    /**
+     * A usually small function or regular expression that validates the input.
+     * After you determine if the input is valid, execute `callback(true)` or `callback(false)` to proceed with the execution.
+     * In function, `this` binds to cellProperties.
+     *
+     * @type {Function|RegExp}
+     * @default undefined
+     * @since 0.9.5
+     */
+    // validator: void 0,
+
+
+
+
+
+    // This way, you can access Handsontable api methods by passing their names as an argument, e.g.:
+    var hotInstance = $("#invoice").handsontable('getInstance');
+
+
+    function updateHeatmap(change, source) {
+        console.log(change);
+      if (change) {
+        heatmap[change[0][0]] = generateHeatmapData.call(this, change[0][0]);
+      } else {
+        heatmap = [];
+    
+        for(var i = 0, rowCount = this.countRows(); i < rowCount ; i++) {
+          heatmap[i] = generateHeatmapData.call(this, i);
+            console.log(heatmap[i]);
         }
-
-
+      }
+    }
+    
+    function point(min, max, value) {
+      return (value - min) / (max - min);
+    }
+    
+    function generateHeatmapData(rowId) {
+      var values = this.getDataAtRow(rowId);
+        console.log('values before splice: ' + values);
+      values.splice(0, 1);
+        console.log('After splice: ' + values);
+      return {
+        min: Math.min.apply(null, values),
+        max: Math.max.apply(null, values)
       };
-
     }
-  });
-
-  // buttons check for array(null)
-
-
-  /**
-   * A usually small function or regular expression that validates the input.
-   * After you determine if the input is valid, execute `callback(true)` or `callback(false)` to proceed with the execution.
-   * In function, `this` binds to cellProperties.
-   *
-   * @type {Function|RegExp}
-   * @default undefined
-   * @since 0.9.5
-   */
-  // validator: void 0,
-
-
-
-
-
-  // This way, you can access Handsontable api methods by passing their names as an argument, e.g.:
-  var hotInstance = $("#invoice").handsontable('getInstance');
-
-
-  function updateHeatmap(change, source) {
-      console.log(change);
-    if (change) {
-      heatmap[change[0][0]] = generateHeatmapData.call(this, change[0][0]);
-    } else {
-      heatmap = [];
-  
-      for(var i = 0, rowCount = this.countRows(); i < rowCount ; i++) {
-        heatmap[i] = generateHeatmapData.call(this, i);
-          console.log(heatmap[i]);
+    
+    function heatmapRenderer(instance, td, row, col, prop, value, cellProperties) {
+      Handsontable.renderers.TextRenderer.apply(this, arguments);
+    
+      if (heatmap[row]) {
+        td.style.backgroundColor = heatmapScale(point(heatmap[row].min, heatmap[row].max, parseInt(value, 10))).hex();
+        td.style.textAlign = 'right';
       }
     }
-  }
-  
-  function point(min, max, value) {
-    return (value - min) / (max - min);
-  }
-  
-  function generateHeatmapData(rowId) {
-    var values = this.getDataAtRow(rowId);
-      console.log('values before splice: ' + values);
-    values.splice(0, 1);
-      console.log('After splice: ' + values);
-    return {
-      min: Math.min.apply(null, values),
-      max: Math.max.apply(null, values)
-    };
-  }
-  
-  function heatmapRenderer(instance, td, row, col, prop, value, cellProperties) {
-    Handsontable.renderers.TextRenderer.apply(this, arguments);
-  
-    if (heatmap[row]) {
-      td.style.backgroundColor = heatmapScale(point(heatmap[row].min, heatmap[row].max, parseInt(value, 10))).hex();
-      td.style.textAlign = 'right';
-    }
-  }
 
-  (function () {
-    function bindButtons() {
-      if (typeof Handsontable === "undefined") {
-        return;
+    (function () {
+      function bindButtons() {
+        if (typeof Handsontable === "undefined") {
+          return;
+        }
+
+        Handsontable.Dom.addEvent(document.body, 'click', function(e) {
+
+          // get instace for button clicked
+          var element = e.target || e.srcElement;
+          var name = element.getAttribute('data');
+          var instance = element.getAttribute('data-instance');
+          var hot = window[instance];        
+
+          if (element.nodeName == "BUTTON") {
+            // Check wich button was pressed
+            switch (element.name) {
+
+              case 'dump':
+                dump(hot)
+                break;
+
+              case 'save':
+                console.log('save button');
+                save(hot);
+
+                break;
+            }
+
+          }
+        });
+      }
+      bindButtons();
+
+      function dump(element) {
+        console.log(document.getElementById('port_id').value)
+        //console.log('function dump:' + JSON.stringify(element.getData()))
       }
 
-      Handsontable.Dom.addEvent(document.body, 'click', function(e) {
-
-        // get instace for button clicked
-        var element = e.target || e.srcElement;
-        var name = element.getAttribute('data');
-        var instance = element.getAttribute('data-instance');
-        var hot = window[instance];        
-
-        if (element.nodeName == "BUTTON") {
-          // Check wich button was pressed
-          switch (element.name) {
-
-            case 'dump':
-              dump(hot)
-              break;
-
-            case 'save':
-              console.log('save button');
-              save(hot);
-
-              break;
+      function save(hot) {
+        var formData = [];
+        $("input[type='checkbox']:checked").each(
+          function() {
+            formData.push($(this).val());
           }
+        );
 
-        }
-      });
-    }
-    bindButtons();
+        $.ajax({
+          url: "{{ route('size_matrix.store') }}", 
+          method: 'POST',
+          data: JSON.stringify({vendor : formData, table : hot.getData()}),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
+          contentType: "application/json; charset=utf-8",
+          dataType: 'json',
 
-    function dump(element) {
-      console.log(document.getElementById('port_id').value)
-      //console.log('function dump:' + JSON.stringify(element.getData()))
-    }
+          beforeSend: function (xhr) {
+            // checks for an empty table
+            // if (hot.countRows() == hot.countEmptyRows()) { 
+            //   alert('Failed to save. Table has no data.');
+            //   document.getElementById("msg").innerHTML = 'Table is empty.'
+            //   return false;
+            // };
 
-    function save(hot) {
-      var formData = [];
-      $("input[type='checkbox']:checked").each(
-        function() {
-          formData.push($(this).val());
-        }
-      );
+            // check for empty rows not at the end of the table, those will be trimed later
+            if ((hot.countEmptyRows() - hot.countEmptyRows(true)) > 0) {
+              alert('Failed to save. Table has empty rows.'); 
+              return false;          
+            };
 
-      $.ajax({
-        url: "{{ route('size_matrix.store') }}", 
-        method: 'POST',
-        data: JSON.stringify({vendor : formData, table : hot.getData()}),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
+            // needed to get pass auth middleware   
+            var token = $('meta[name="csrf_token"]').attr('content');
 
-        beforeSend: function (xhr) {
-          // checks for an empty table
-          // if (hot.countRows() == hot.countEmptyRows()) { 
-          //   alert('Failed to save. Table has no data.');
-          //   document.getElementById("msg").innerHTML = 'Table is empty.'
-          //   return false;
-          // };
+            if (token) {
+              return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+            }
+          },
 
-          // check for empty rows not at the end of the table, those will be trimed later
-          if ((hot.countEmptyRows() - hot.countEmptyRows(true)) > 0) {
-            alert('Failed to save. Table has empty rows.'); 
-            return false;          
-          };
+          success:function(data){
+            // check response
+            if (data.status == 'success') {
+            	alert('Matrix(es) was successfully saved.');
+           	  hot.updateSettings({
+                  cells: function (row, col, prop) {
+                    var cellProperties = {};
 
-          // needed to get pass auth middleware   
-          var token = $('meta[name="csrf_token"]').attr('content');
+                      cellProperties.readOnly = true;
 
-          if (token) {
-            return xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                    return cellProperties;
+                  }
+                });
+              window.location.replace('{{ url('size_matrix') }}');
+            }else{
+            	alert('There was an eror, please contact Developoment');
+            };
+          },
+
+          error:function(data){
+            console.log('start error');
+            var jsMsg = "";
+            var htmlMsg = "";
+            for(var error in data.responseJSON) {
+              jsMsg += data.responseJSON[error] + '\n';
+              htmlMsg += data.responseJSON[error] + '<br>';
+            }
+            alert('There was an error with the submit, please check your data and try again. If problem persist contact Developoment team.\n \n '+ jsMsg);
+            document.getElementById("msg").innerHTML = htmlMsg;
           }
-        },
-
-        success:function(data){
-          // check response
-          if (data.status == 'success') {
-          	alert('Matrix(es) was successfully saved.');
-         	  hot.updateSettings({
-                cells: function (row, col, prop) {
-                  var cellProperties = {};
-
-                    cellProperties.readOnly = true;
-
-                  return cellProperties;
-                }
-              });
-            window.location.replace('{{ url('size_matrix') }}');
-          }else{
-          	alert('There was an eror, please contact Developoment');
-          };
-        },
-
-        error:function(data){
-          console.log('start error');
-          var jsMsg = "";
-          var htmlMsg = "";
-          for(var error in data.responseJSON) {
-            jsMsg += data.responseJSON[error] + '\n';
-            htmlMsg += data.responseJSON[error] + '<br>';
-          }
-          alert('There was an error with the submit, please check your data and try again. If problem persist contact Developoment team.\n \n '+ jsMsg);
-          document.getElementById("msg").innerHTML = htmlMsg;
-        }
-      })
-    } 
-  })();      
-</script>
-
-
-
+        })
+      } 
+    })();      
+  </script>
 @endsection

@@ -37,6 +37,9 @@
 <input type="submit" name="submit" id="submit" onclick="submit()">
 
 <meta name="csrf_token" content="{{ csrf_token() }}" />
+@endsection
+
+@section('js')
 <script type="text/javascript">
 	function submit(){
 		var selected = [];

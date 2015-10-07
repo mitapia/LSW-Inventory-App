@@ -10,41 +10,44 @@
 
 
 @section('content')
-
-</br>
-<div class="row">
-  <div class="col-md-8">
-  	<label for="vendor">Vendor:</label>
-  	<select name="vendor" id="vendor" onchange="loadSizeData(this)">
-        <option disabled selected> -- Select a Vendor -- </option>
-      @foreach($vendors as $vendor)
-        <option value="{{$vendor->id}}">{{$vendor->name}}</option>
-      @endforeach
-    </select></br>
-
-  	<label for="invoice_number:">Invoice ID:</label>
-  	<input type="text" id="invoice_number" name="invoice_number"/></br>
-  	Page #:<input type="text" id="page_number" style="width: 20px" value="1"> of <input type="text" id="page_total" style="width: 20px" value="1"> Total Pages.
+  </br>
+  <div class="row">
+    <div class="col-md-8">
+    	<label for="vendor">Vendor:</label>
+    	<select name="vendor" id="vendor" onchange="loadSizeData(this)">
+          <option disabled selected> -- Select a Vendor -- </option>
+        @foreach($vendors as $vendor)
+          <option value="{{$vendor->id}}">{{$vendor->name}}</option>
+        @endforeach
+      </select>
+      </br>
+    	<label for="invoice_number:">Invoice ID:</label>
+    	<input type="text" id="invoice_number" name="invoice_number"/></br>
+    	Page #:<input type="text" id="page_number" style="width: 20px" value="1"> of <input type="text" id="page_total" style="width: 20px" value="1"> Total Pages.
+    </div>
+    <div class="col-md-4">
+      Notes: </br>
+      <textarea name="notes" id="notes" rows="10" cols="30"></textarea>
+    </div>
+  	</br>
   </div>
-  <div class="col-md-4">
-    Notes: </br>
-    <textarea name="notes" id="notes" rows="10" cols="30"></textarea>
+
+  <div class="row">
+
+    <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
+
+    <p id="msg"></p>
+
+    Last line in the table is the only empty line allowed at time of submit and will not be saved.
+    <hr>
+    <meta name="csrf_token" content="{{ csrf_token() }}" />
+
+    <!-- Table -->
+    <div id="invoice"></div>
   </div>
-	</br>
-</div>
-<div class="row">
+@endsection
 
-  <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
-
-<p id="msg"></p>
-
-Last line in the table is the only empty line allowed at time of submit and will not be saved.
-<hr>
-<meta name="csrf_token" content="{{ csrf_token() }}" />
-
-<!-- Table -->
-<div id="invoice"</div>
-</div>
+@section('js')
 <script>
 var changedData;
 var formatedData;

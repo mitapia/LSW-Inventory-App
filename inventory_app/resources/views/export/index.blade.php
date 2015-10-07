@@ -1,21 +1,19 @@
 @extends('master')
 
 @section('head')
-<style>
-/*table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 5px;
-    text-align: left;
-}*/
-</style>
+    <style>
+    /*table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }*/
+    </style>
 @endsection
 
-
 @section('title', 'Export')
-
 
 @section('content')
 <div><h1>All Submited Forms</h1></div>
@@ -43,14 +41,15 @@ th, td {
     @endforeach
 </table>
 
-
-</br>
 <br>
 <br>
 
 <input type="submit" name="submit" id="submit" onclick="submit()">
 
 <meta name="csrf_token" content="{{ csrf_token() }}" />
+@endsection
+
+@section('js')
 <script type="text/javascript">
     function submit(){
     // var selected = [];

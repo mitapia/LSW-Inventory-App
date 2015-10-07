@@ -30,11 +30,13 @@ Enter details of invenotry items:
 
 <!-- Table -->
 <div id="detail"</div>
+@endsection
 
+@section('js')
 <script>
 	// load style data
 	var preLoadData = [
-@foreach($invoice->inventory_prep as $item)
+  @foreach($invoice->inventory_prep as $item)
   {
       id: '{{$item->id}}',
       style: '{{$item->style}}', 
@@ -42,7 +44,7 @@ Enter details of invenotry items:
       department: '{{$item->department->name}}', 
       color: '{{$item->color}}'
     },
-@endforeach
+  @endforeach
     ];
 
 
@@ -275,9 +277,4 @@ Enter details of invenotry items:
     } 
   })();        
 </script>
-
-
-
-
-
 @endsection
