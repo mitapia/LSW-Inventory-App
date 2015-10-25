@@ -258,7 +258,7 @@
         );
 
         $.ajax({
-          url: "{{ route('size_matrix.store') }}", 
+          url: "{{ route('settings.size_matrix.store') }}", 
           method: 'POST',
           data: JSON.stringify({vendor : formData, table : hot.getData()}),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
           contentType: "application/json; charset=utf-8",
@@ -299,7 +299,7 @@
                     return cellProperties;
                   }
                 });
-              window.location.replace('{{ url('size_matrix') }}');
+              window.location.replace('{{ url('settings/size_matrix') }}');
             }else{
             	alert('There was an eror, please contact Developoment');
             };

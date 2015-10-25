@@ -46,12 +46,12 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="{{ url('/auth/logout') }}">Size Matix</a></li>
-                <li><a href="{{ url('/auth/logout') }}">Price Calculator</a></li>
+                <li><a href="{{ route('settings.size_matrix.index') }}">Size Matix</a></li>
+                <li><a href="{{ route('settings.price_rule.index') }}">Price Calculator</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="{{ url('/auth/logout') }}">Vendors</a></li>
-                <li><a href="{{ url('/auth/logout') }}">Categories</a></li>
-                <li><a href="{{ url('/auth/logout') }}">Departments</a></li>
+                <li><a href="{{ url('settings/vendor') }}">Vendors</a></li>
+                <li><a href="{{ url('settings/category') }}">Categories</a></li>
+                <li><a href="{{ url('settings/department') }}">Departments</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -70,7 +70,7 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-2 col-md-2 col-lg-1 sidebar">
           <ul class="nav nav-sidebar">
             <li @if ($page == "dashboard") class="active" @endif><a href="{{ url('dashboard') }}">Dashboard</a></li>
           </ul>
@@ -112,7 +112,7 @@
           </ul>
         </div> -->
 
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-2 col-lg-11 col-lg-offset-1 main">
           @yield('content')
         </div>
       </div>

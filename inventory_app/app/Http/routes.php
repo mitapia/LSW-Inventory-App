@@ -13,20 +13,23 @@
 
 Route::get('/', function () {
     return redirect('dashboard');
-});
+}); 
 
 Route::controller('dashboard', 'DashboardController');
 
 Route::resource('invoice', 'InvoiceController');
-Route::resource('quantity', 'QuantityController');
-Route::resource('detail', 'DetailController');
-
-Route::resource('size_matrix', 'SizeMatrixController');
-Route::resource('export', 'ExportController');
 Route::resource('delivered', 'DeliveredController');
-Route::resource('price_rule', 'PriceRuleController');
+Route::resource('detail', 'DetailController');
+Route::resource('quantity', 'QuantityController');
+Route::resource('export', 'ExportController');
 
-//Route::resource('select', 'SizeMatrixController');
+Route::resource('settings/size_matrix', 'SizeMatrixController');
+Route::resource('settings/price_rule', 'PriceRuleController');
+Route::controller('settings/{option}', 'OptionsController' );
+
+// Route::controller('settings/department', 'OptionsController');
+// Route::controller('settings/category', 'OptionsController');
+// Route::controller('settings/vendor', 'OptionsController');
 
 
 Route::get('view/{option}', 'SelectController@Index');

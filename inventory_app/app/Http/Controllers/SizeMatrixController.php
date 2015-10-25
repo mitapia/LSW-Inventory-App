@@ -18,7 +18,7 @@ class SizeMatrixController extends Controller
     public function index()
     {
         $matices = App\Size_Matrix::all();
-        return view ('size_matrix.index', ['matices' => $matices, 'page' => 'settings']);
+        return view ('settings.size_matrix.index', ['matices' => $matices, 'page' => 'settings']);
     }
 
     /**
@@ -29,7 +29,7 @@ class SizeMatrixController extends Controller
     public function create()
     {
         $vendors = App\Vendor::all();
-        return view('size_matrix.create', [
+        return view('settings.size_matrix.create', [
             'vendors' => $vendors, 
             'sizes' => '1', '
             departments'=>'3',

@@ -18,8 +18,20 @@ class PriceRuleController extends Controller
      */
     public function index()
     {
-        $rules = App\Price_Rule::get();
-        return view('price_rule.index', ['price_rules' => $rules, 'page' => 'settings']);
+        $count_departments = App\Department::count();
+        $count_categories = App\Category::count();
+        $count_vendors = App\Vendor::count();
+
+        $rules = App\Price_Rule::get()->sortBy('priority');
+        $last_priority = $rules->last();
+
+        return view('settings.price_rule.index', [
+            'price_rules' => $rules, 
+            'page' => 'settings',
+            'total_departments' => $count_departments,
+            'total_categories' => $count_categories,
+            'total_vendors' => $count_vendors,
+        ]);
     }
 
     /**
@@ -32,12 +44,14 @@ class PriceRuleController extends Controller
         $departments = App\Department::all();
         $categories = App\Category::all();
         $vendors = App\Vendor::all();
+        $last_priority = App\Price_Rule::get()->sortBy('priority')->last();
 
-        return view('price_rule.create', [
+        return view('settings.price_rule.create', [
             'departments' => $departments, 
             'categories'  => $categories,
             'vendors'     => $vendors,
-            'page' => 'settings'
+            'page' => 'settings',
+            'next_priority' => ++$last_priority->priority
         ]);
     }
 
@@ -77,6 +91,8 @@ class PriceRuleController extends Controller
             $rule->custom_price_2 = $request->input('employee_price');
             $rule->custom_price_3 = $request->input('wholesale_price');
             $rule->custom_price_4 = $request->input('regular_price');
+            $rule->rewards = $request->input('rewards');
+            $rule->priority = $request->input('priority');
 
             $rule->save();
 
@@ -85,7 +101,7 @@ class PriceRuleController extends Controller
             $rule->vendor()->attach($request->input('vendor'));
         });
 
-        return route('price_rule.index');
+        return redirect()->route('settings.price_rule.index');
     }
 
     /**
