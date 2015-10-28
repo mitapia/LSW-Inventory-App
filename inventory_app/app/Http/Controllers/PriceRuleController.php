@@ -44,14 +44,15 @@ class PriceRuleController extends Controller
         $departments = App\Department::all();
         $categories = App\Category::all();
         $vendors = App\Vendor::all();
-        $last_priority = App\Price_Rule::get()->sortBy('priority')->last();
+        $price_rule = App\Price_Rule::get()->sortBy('priority')->last();
+        $last_priority = empty($price_rule->priority) ? 1 : ++$price_rule->priority;
 
         return view('settings.price_rule.create', [
             'departments' => $departments, 
             'categories'  => $categories,
             'vendors'     => $vendors,
             'page' => 'settings',
-            'next_priority' => ++$last_priority->priority
+            'next_priority' => $last_priority
         ]);
     }
 
