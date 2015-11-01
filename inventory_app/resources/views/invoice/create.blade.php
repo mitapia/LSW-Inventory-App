@@ -55,7 +55,7 @@
     function loadSizeData (selected) {
       $.ajax({
         method: "GET",
-        url: "{{ url('size_matrix').'/' }}"+selected.value,
+        url: "{{ url('settings/size_matrix').'/' }}"+selected.value,
         success: function (data) {
           //console.log('returned' + data)
           //changedData = JSON.parse(data);
