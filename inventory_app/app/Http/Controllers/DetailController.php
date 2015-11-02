@@ -18,6 +18,9 @@ class DetailController extends Controller
     public function index()
     {
         // Query all open Invoices
+        $invoices = App\Invoice::open()->get();
+
+        return view('detail.index', ['invoices' => $invoices, 'page' => 'detail.index']);
     }
 
     /**

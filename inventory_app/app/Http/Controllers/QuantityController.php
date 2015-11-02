@@ -17,8 +17,10 @@ class QuantityController extends Controller
      */
     public function index()
     {
-        $items = App\Inventory_Prep::where('invoice_id', 7)->get();
-        return view('quantity.create', ['invoice' => $items, 'page' => 'quantity.create']);
+        // Query all open Invoices
+        $invoices = App\Invoice::open()->get();
+        
+        return view('quantity.index', ['invoices' => $invoices, 'page' => 'quantity.index']);
     }
 
     /**

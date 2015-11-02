@@ -82,8 +82,8 @@
             <li @if ($page == "delivered.index") class="active" @endif><a href="{{ route('delivered.index') }}">Delivered</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li @if ($page == "detail.create") class="active" @endif><a href="{{ route('detail.create') }}">Details</a></li>
-            <li @if ($page == "quantity.create") class="active" @endif><a href="{{ route('quantity.create') }}">Quantity</a></li>
+            <li @if ($page == "detail.index") class="active" @endif><a href="{{ route('detail.index') }}">Details</a></li>
+            <li @if ($page == "quantity.index") class="active" @endif><a href="{{ route('quantity.index') }}">Quantity</a></li>
           </ul>        
           <ul class="nav nav-sidebar">
             <li @if ($page == "export.index") class="active" @endif><a href="{{ route('export.index') }}">Export</a></li>
