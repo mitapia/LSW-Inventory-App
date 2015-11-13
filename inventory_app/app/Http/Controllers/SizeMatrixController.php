@@ -28,6 +28,8 @@ class SizeMatrixController extends Controller
      */
     public function create()
     {
+        $this->authorize('admin');
+
         $vendors = App\Vendor::all();
         return view('settings.size_matrix.create', [
             'vendors' => $vendors, 
@@ -45,6 +47,8 @@ class SizeMatrixController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('admin');
+
         // Dump all data into $data
         $data = $request->all();
 
@@ -128,7 +132,7 @@ class SizeMatrixController extends Controller
      */
     public function edit($id)
     {
-        //
+        $this->authorize('admin');
     }
 
     /**
@@ -140,7 +144,7 @@ class SizeMatrixController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->authorize('admin');
     }
 
     /**
@@ -151,6 +155,6 @@ class SizeMatrixController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->authorize('admin');
     }
 }

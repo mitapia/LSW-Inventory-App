@@ -52,6 +52,7 @@ class OptionsController extends Controller
      */
     public function postStore(Request $request, $option)
     {
+        $this->authorize('admin');
     	switch ($option) {
             case 'department':
             	// Validate the request...
@@ -105,6 +106,7 @@ class OptionsController extends Controller
      */
     public function postDestroy($option, $id)
     {
+        $this->authorize('admin');
     	switch ($option) {
             case 'department':
                 App\Department::destroy($id);

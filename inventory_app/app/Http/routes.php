@@ -11,26 +11,36 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('dashboard');
-}); 
+Route::group(['middleware' => 'auth'], function () {
+	Route::get('/', function () {
+	    return redirect('dashboard');
+	}); 
+	Route::get('home', function () {
+	    return redirect('dashboard');
+	}); 
 
-Route::controller('dashboard', 'DashboardController');
+	Route::controller('dashboard', 'DashboardController');
 
-Route::resource('invoice', 'InvoiceController');
-Route::resource('delivered', 'DeliveredController');
-Route::resource('detail', 'DetailController');
-Route::resource('quantity', 'QuantityController');
-Route::resource('export', 'ExportController');
+	Route::resource('invoice', 'InvoiceController');
+	Route::resource('delivered', 'DeliveredController');
+	Route::resource('detail', 'DetailController');
+	Route::resource('quantity', 'QuantityController');
+	Route::resource('export', 'ExportController');
 
-Route::resource('settings/size_matrix', 'SizeMatrixController');
-Route::resource('settings/price_rule', 'PriceRuleController');
-Route::controller('settings/{option}', 'OptionsController' );
+	Route::resource('settings/size_matrix', 'SizeMatrixController');
+	Route::resource('settings/price_rule', 'PriceRuleController');
+	Route::controller('settings/{option}', 'OptionsController' );
 
-// Route::controller('settings/department', 'OptionsController');
-// Route::controller('settings/category', 'OptionsController');
-// Route::controller('settings/vendor', 'OptionsController');
+	// Registration routes...
+	Route::get('auth/register', 'Auth\AuthController@getRegister');
+	Route::post('auth/register', 'Auth\AuthController@postRegister');	
+});
 
+// Authentication routes...
+Route::get('auth/login', 'Auth\AuthController@getLogin');
+Route::post('auth/login', 'Auth\AuthController@postLogin');
+Route::get('auth/logout', 'Auth\AuthController@getLogout');
 
-Route::get('view/{option}', 'SelectController@Index');
-Route::get('dd', 'DDController@index');
+// Password reset routes...
+Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
+Route::post('password/reset', 'Auth\PasswordController@postReset');

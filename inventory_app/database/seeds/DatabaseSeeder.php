@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CategoryTableSeeder::class);
         $this->call(VendorTableSeeder::class);
         $this->call(OnlineColorTableSeeder::class);
+        $this->call(UserTableSeeder::class);
 
         Model::reguard();
     }

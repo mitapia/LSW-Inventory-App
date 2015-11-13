@@ -41,6 +41,8 @@ class PriceRuleController extends Controller
      */
     public function create()
     {
+        $this->authorize('admin');
+
         $departments = App\Department::all();
         $categories = App\Category::all();
         $vendors = App\Vendor::all();
@@ -64,6 +66,8 @@ class PriceRuleController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('admin');
+
         // Validation
         $this->validate($request, [
             'min' => 'required|numeric|min:0.01',
@@ -124,7 +128,7 @@ class PriceRuleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $this->authorize('admin');
     }
 
     /**
@@ -136,7 +140,7 @@ class PriceRuleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->authorize('admin');
     }
 
     /**
@@ -147,6 +151,6 @@ class PriceRuleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->authorize('admin');
     }
 }
