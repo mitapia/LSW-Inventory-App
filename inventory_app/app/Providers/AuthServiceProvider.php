@@ -29,5 +29,9 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('admin', function ($user) {
             return $user->permission->name === 'admin';
         });
+
+        $gate->define('show-user', function ($user, $id) {
+            return $user->username === $id;
+        });
     }
 }

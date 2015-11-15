@@ -31,6 +31,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::resource('settings/price_rule', 'PriceRuleController');
 	Route::controller('settings/{option}', 'OptionsController' );
 
+	Route::resource('user', 'UserController' );
+
 	// Registration routes...
 	Route::get('auth/register', 'Auth\AuthController@getRegister');
 	Route::post('auth/register', 'Auth\AuthController@postRegister');	
