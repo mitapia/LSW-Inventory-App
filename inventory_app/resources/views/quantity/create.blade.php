@@ -214,7 +214,7 @@
         $.ajax({
           url: "{{ route('quantity.store') }}", 
           method: 'POST',
-          data: JSON.stringify(hot.getData()),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
+          data: JSON.stringify(hot.getSourceData()),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
           contentType: "application/json; charset=utf-8",
           dataType: 'json',
 

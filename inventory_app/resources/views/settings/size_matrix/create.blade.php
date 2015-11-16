@@ -6,30 +6,34 @@
 @endsection
 
   <style type="text/css">
-.checkbox-grid li {
+/*.checkbox-grid li {
     display: block;
     float: left;
     width: 33%;
-}
+}*/
   </style>
 
 @section('title', 'Size Matrix')
 
 @section('content')
   <div class="row">
-    <form>
-      <ul class="checkbox-grid">
+    <!-- <form> -->
+      <div class="checkbox-grid">
         @foreach($vendors as $vendor)
-          <li><input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/><label for="{{$vendor->id}}">{{$vendor->name}}</label></li>
+          <label class="col-xs-6 col-sm-5 col-md-4 col-lg-2">
+          <input type="checkbox" value="{{$vendor->id}}" id="{{$vendor->id}}"/>{{$vendor->name}}
+          </label>
         @endforeach
-      </ul>
-    </form>
+      </div>
+    <!-- </form> -->
   </div>
 
   <div class="row">
-    <button name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
-    <p id="msg"></p>
-    Last line in the table is the only empty line allowed at time of submit and will not be saved.
+      <div class="col-md-offset-3">
+        <button class="btn btn-success btn-lg" name="save" id="save" data="#invoice" data-instance="hotInstance">Save</button>
+      </div>
+      <p class="bg-danger text-danger" id="msg"></p>
+      <p class="alert alert-info">Last line in the table is the only empty line allowed at time of submit and will not be saved.</p>
   </div>
 
   <div class="row">
@@ -260,7 +264,7 @@
         $.ajax({
           url: "{{ route('settings.size_matrix.store') }}", 
           method: 'POST',
-          data: JSON.stringify({vendor : formData, table : hot.getData()}),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
+          data: JSON.stringify({vendor : formData, table : hot.getSourceData()}),//{ form : formdata, table : JSON.stringify(hot.getData()}), // returns all cell data
           contentType: "application/json; charset=utf-8",
           dataType: 'json',
 
@@ -306,7 +310,7 @@
           },
 
           error:function(data){
-            console.log('start error');
+            // console.log('start error');
             var jsMsg = "";
             var htmlMsg = "";
             for(var error in data.responseJSON) {
