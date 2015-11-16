@@ -63,6 +63,9 @@ class SizeMatrixController extends Controller
                 'vendor.'.$i  =>  'required|numeric|exists:vendor,id',
             ]);
         }
+        if (count($data['table']) == 1) {
+            return json_encode(array('status' => 'empty table'));
+        }
         for ($i=0; $i < (count($data['table']) - 1); $i++) { 
             $this->validate($request, [
                 // vefify name was set and is below size limit
