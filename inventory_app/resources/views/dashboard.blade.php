@@ -97,6 +97,6 @@
 		@endunless
 
 	@else
-	    <p>No Open Invoice. Create a New Invoice to begin.</p>
+	    <p class="text-center lead">No Open Invoice. Create a <a href="{{ route('invoice.create') }}">New Invoice</a> to begin.</p>
 	@endif	
 @endsection

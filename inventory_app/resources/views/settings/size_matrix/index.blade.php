@@ -14,7 +14,7 @@
     }*/
     </style>
     <div class="row">
-        <a class="btn btn-default" href="{{ route('settings.size_matrix.create') }}" role="button">New Size Matrix</a>
+        <a class="btn btn-primary" href="{{ route('settings.size_matrix.create') }}" role="button">New Size Matrix</a>
     </div>
 
   <div class="row">
