@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->permission->name === 'admin';
         });
 
-        $gate->define('show-user', function ($user, $id) {
+        $gate->define('owns-user', function ($user, $id) {
             return $user->username === $id;
         });
     }

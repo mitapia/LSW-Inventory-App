@@ -29,5 +29,11 @@
     
     <br>
     <br>
-    <a href="{{ url('dashboard') }}">Go back to dashboard</a>
+    <br>
+    <a class="btn btn-warning btn-sm" href="{{ url('password/reset', $user->username) }}">Reset Password</a>
+    <br>
+    <br>
+    <a class="btn btn-primary" href="{{ url('dashboard') }}">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Go back to dashboard
+    </a>
 @endsection

@@ -58,7 +58,10 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}<span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="{{ url('/user', Auth::user()->username) }}">Account Info</a></li>
-                <li><a href="{{ url('/auth/reset') }}">Change Password</a></li>
+                @can('admin')
+                <li><a href="{{ url('/user') }}">Users List</a></li>
+                @endcan
+                <li><a href="{{ url('password/reset', Auth::user()->username) }}">Change Password</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
               </ul>

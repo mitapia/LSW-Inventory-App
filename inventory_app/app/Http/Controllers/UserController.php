@@ -53,7 +53,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $this->authorize('show-user', $id);
+        $this->authorize('owns-user', $id);
 
         $user = User::where('username', $id)->firstOrFail();
         $page = 'settings';
@@ -92,5 +92,10 @@ class UserController extends Controller
     public function destroy($id)
     {
         $this->authorize('admin');
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('user.index'); 
     }
 }

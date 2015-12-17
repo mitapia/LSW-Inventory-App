@@ -80,7 +80,7 @@ class AuthController extends Controller
     public function getRegister()
     {
         $this->authorize('admin');
-        return view('auth.register');
+        return view('auth.register', ['page' => 'settings']);
     }
 
     /**
@@ -103,6 +103,6 @@ class AuthController extends Controller
 
         $this->create($request->all());
 
-        return redirect($this->redirectPath());
+        return redirect()->route('user.index');
     }
 }

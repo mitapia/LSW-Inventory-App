@@ -1,4 +1,23 @@
+@extends('master')
 
+@section('head')
+    <style>
+    /*table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }*/
+    </style>
+@endsection
+
+
+@section('title', 'Register User')
+
+
+@section('content')
 <div class="col-md-8 col-md-offset-2">
 	<div class="panel panel-default">
 
@@ -47,15 +66,20 @@
 					</div>
 				</div>
 
-				 <div>
-					<input type="radio" name="permission" value="basic" checked>Basic
-					<br>
-					<input type="radio" name="permission" value="admin">Admin
+				<div class="form-group">
+				    <div class="col-md-offset-4">
+						<div class="radio">
+							<label><input type="radio" name="permission" value="basic" checked>Basic</label>
+						</div>
+						<div class="radio">
+							<label><input type="radio" name="permission" value="admin">Admin</label>
+						</div>
+				    </div>
 				</div>
 
 				<div class="form-group">
 					<div class="col-md-6 col-md-offset-4">
-						<button type="submit" class="btn btn-primary">
+						<button type="submit" class="btn btn-success">
 							Register
 						</button>
 					</div>
@@ -64,4 +88,4 @@
 		</div>
 	</div>
 </div>
-	
+@endsection
