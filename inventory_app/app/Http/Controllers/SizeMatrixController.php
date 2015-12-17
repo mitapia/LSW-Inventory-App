@@ -124,6 +124,9 @@ class SizeMatrixController extends Controller
     {
         $matrices = App\Size_Matrix::where('vendor_id', $id)->get();
 
+        if ($matrices->isEmpty()) {
+            return array('status' => 'error', 'msg' => 'This Vendor does not have any Matrices added.');
+        }
         return $matrices;
     }
 

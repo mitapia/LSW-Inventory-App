@@ -68,25 +68,44 @@
     var formatedData;
 
     function loadSizeData (selected) {
+      document.getElementById("msg").innerHTML = "";
       $.ajax({
         method: "GET",
         url: "{{ url('settings/size_matrix').'/' }}"+selected.value,
         success: function (data) {
           //console.log('returned' + data)
           //changedData = JSON.parse(data);
+          if (data.status == 'error') {
+            document.getElementById("msg").innerHTML = 'This Vendor does not have any Matrices saved, create one <a href="{{ route('settings.size_matrix.create') }}">here</a>.';
+            alert(data.msg);
+            hotInstance.clear();
+            hotInstance.updateSettings({
+              data: [{style: 'Must first create Matrix for Vendor'}],
+              columns:table_col_settings,
+              cells: function (row, col, prop) {
+                var cellProperties = {};
+
+                cellProperties.readOnly = true;
+
+                return cellProperties;
+              }
+            });
+            
+            return false;
+          };
 
           formatedData = $.map(data, function(el, i) { 
-            console.log(el.name);
-            console.log(i);
+            console.log(el);
+            // console.log(i);
 
             return el.name; 
           });
 
           table_col_settings[2] ={
-          data: 'size',
-          type: 'dropdown',
-              source: formatedData
-              };
+            data: 'size',
+            type: 'dropdown',
+            source: formatedData
+          };
           
           hotInstance.updateSettings({
             columns:table_col_settings,
@@ -161,7 +180,7 @@
       
       manualColumnResize: true,
       manualRowResize: true,
-      colWidths: [200, 90, 150, 150, 180],
+      colWidths: [230, 90, 150, 150, 180],
       colHeaders: ['Style', 'Cost', 'Size', 'Department', 'Color'],
 
       columns: table_col_settings,
