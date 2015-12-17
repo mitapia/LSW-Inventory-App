@@ -19,9 +19,10 @@ class InvoiceController extends Controller
     {
         // Show all OPEN invoices
         $invoices = App\Invoice::open()->get();
+        $page = 'invoice.index';
 
         // Forward directly to the create page
-        return view('invoice.index', ['invoices' => $invoices, 'page' => 'invoice.index']);
+        return view('invoice.index', compact('invoices', 'page'));
     }
 
     /**
@@ -34,13 +35,9 @@ class InvoiceController extends Controller
         $sizes = App\Size_Matrix::all();
         $departments = App\Department::all();
         $vendors = App\Vendor::all();
+        $page = 'invoice.create';
 
-        return view('invoice.create', [ 
-            'sizes' => $sizes, 
-            'departments' => $departments, 
-            'vendors' => $vendors,
-            'page' => 'invoice.create'
-        ]);
+        return view('invoice.create', compact('sizes', 'departments', 'vendors', 'page'));
     }
 
     /**
