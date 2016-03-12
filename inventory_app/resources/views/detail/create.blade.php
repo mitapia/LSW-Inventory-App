@@ -21,7 +21,6 @@ Invoice: {{$invoice->id}} <br>
 <button name="save" id="save" data="#detail" data-instance="hotInstance">Save</button>
   
 
-</div>
 <p id="msg"></p>
 
 Enter details of invenotry items: 
@@ -29,11 +28,14 @@ Enter details of invenotry items:
 <meta name="csrf_token" content="{{ csrf_token() }}" />
 
 <!-- Table -->
-<div id="detail"</div>
+<div id="detail"></div>
 @endsection
 
 @section('js')
+  <script src="http://handsontable.com/dist/handsontable.full.js"></script>
+
 <script>
+
 	// load style data
 	var preLoadData = [
   @foreach($invoice->inventory_prep as $item)
