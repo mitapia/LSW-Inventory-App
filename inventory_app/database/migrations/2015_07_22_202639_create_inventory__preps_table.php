@@ -20,6 +20,7 @@ class CreateInventoryPrepsTable extends Migration
             $table->integer('department_id');
             $table->integer('category_id');
             $table->integer('invoice_id');
+            $table->foreign('invoice_id')->references('id')->on('invoice')->onDelete('cascade');
             $table->integer('size_matrix_id');
             $table->boolean('detail_set')->default(0);
             $table->boolean('quantity_set')->default(0);
