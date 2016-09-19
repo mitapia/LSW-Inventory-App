@@ -14,9 +14,12 @@ class CreateQBInventoriesTable extends Migration
     {
         Schema::create('qb_inventory', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('qb_id')->unsigned();
             $table->string('style', 31);
             $table->string('color', 12);
             $table->string('size', 12);
+            $table->integer('vendor_id');
+            $table->char('upc', 13);
             $table->timestamps();
         });
     }

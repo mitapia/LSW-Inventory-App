@@ -15,9 +15,9 @@ class CreateTemporaryStagingsTable extends Migration
         Schema::create('temporary_stagings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('inventory_prep_id');
-            $table->string('style', 31);
-            $table->string('color', 12);
             $table->string('size', 12);
+            $table->integer('price_rule_id');
+            $table->boolean('reorder');
             for ($i=1; $i <= 4; $i++) { 
                 $table->tinyInteger('store_'.$i)->default(0)->unsigned();
             };

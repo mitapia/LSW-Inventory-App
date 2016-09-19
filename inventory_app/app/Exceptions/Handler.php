@@ -39,6 +39,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof InconsistentAttributeException) {
+            return response()->view('errors.export', ['message' => $e->getMessage(), 'page' => 'export.index'], 500);
+        }
+        if ($e instanceof DuplicateIdentifierException) {
+            return response()->view('errors.export', ['message' => $e->getMessage(), 'page' => 'export.index'], 500);
+        }
         return parent::render($request, $e);
     }
 }

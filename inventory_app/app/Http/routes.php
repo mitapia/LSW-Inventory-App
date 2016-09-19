@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
 	}); 
 
 	Route::controller('dashboard', 'DashboardController');
+	Route::controller('history', 'HistoryController');
 
 	Route::resource('invoice', 'InvoiceController');
 	Route::resource('delivered', 'DeliveredController');

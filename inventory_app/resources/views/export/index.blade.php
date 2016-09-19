@@ -1,87 +1,56 @@
 @extends('master')
 
-@section('head')
-    <style>
-    /*table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 5px;
-        text-align: left;
-    }*/
-    </style>
-@endsection
-
 @section('title', 'Export')
 
 @section('content')
-<div><h1>All Submited Forms</h1></div>
+<div><h1>Item for Exporting</h1></div>
 
-</br></br>
-<table style="width:100%">
-	<tr>
-		<th>ID</th>
-		<th>Style</th>
-		<th>color</th>
-        <th>Department</th>
-		<th>Size Matrix</th>
-        <th>Invoice Number</th>
-	</tr>
-    @foreach($items as $item)
-          <tr>
-            <td>{{ $item->id }}</td>
-            <td>{{ $item->style }}</td>
-            <td>{{ $item->color }}</td>
-            <td>{{ $item->department->name }}</td>
-            <td>{{ $item->size_matrix->name }}</td>
-            <td>{{ $item->invoice->invoice_number }}</td>
-          </tr>
-        
-    @endforeach
-</table>
+@if ($reorder_count > 0)
+<p class="bg-warning"><strong>{{$reorder_count}} items are for reorder.</strong>  Yellow lines mean they are reorders</p>
+@endif
+@if ($missing_price_rule >0)
+<p class="bg-danger"><strong>{{$missing_price_rule}} items have serious errors.</strong>  Red cells mean there is an error and that item will be not be exported</p>
+@endif
 
-<br>
-<br>
+<form action="{{route('export.store')}}" method="POST">
+    {{ csrf_field() }}
 
-<input type="submit" name="submit" id="submit" onclick="submit()">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="close_invoice" value="yes" checked> 
+            Close all open Invoices after Export.
+        </label>
+    </div>
+    <div class="table-responsive">
+    <table class="table table-bordered table-condensed">
+        <thead>
+        	<tr>
+                <th></th>
+        		<th>Style</th>
+        		<th>Color</th>
+                <th>Department</th>
+        		<th>Size</th>
+                <th>Invoice Number</th>
+                <th>Price Rule</th>
+        	</tr>
+        </thead>
+        <tbody>
+        <?php $n=1 ?>
+        @foreach($items as $item)
+              <tr @if ($item->reorder) class="warning" @endif>
+                <td>{{ $n++ }}</td>
+                <td>{{ $item->inventory_prep->style }}</td>
+                <td>{{ $item->inventory_prep->color }}</td>
+                <td>{{ $item->inventory_prep->department->name }}</td>
+                <td>{{ $item->size}}</td>
+                <td>{{ $item->inventory_prep->invoice->invoice_number }}</td>
+                <td{!! isset($item->price_rule->item_description) ? '>'.$item->price_rule->item_description : ' class="danger">No matching Price Rule Found' !!}</td>
+              </tr>
+        @endforeach
+        </tbody>
+    </table>
+    </div>
 
-<meta name="csrf_token" content="{{ csrf_token() }}" />
-@endsection
-
-@section('js')
-<script type="text/javascript">
-    function submit(){
-    // var selected = [];
-    // $("input[type='checkbox']:checked").each(
-        
-    //     function() {
-    //         selected.push($(this).val());
-    //        console.log($(this).val());
-
-    //     }
-
-    // );
-    //console.log(selected)
-
-        $.ajax({
-            type:"post",
-            url:"{{route('export.store')}}",
-            data:{
-                checkbox: true,
-                },
-            success:function(msg){
-                console.log(msg);
-                },
-            beforeSend: function (xhr) {
-              // needed to get pass auth middleware   
-              var token = $('meta[name="csrf_token"]').attr('content');
-
-              if (token) {
-                return xhr.setRequestHeader('X-CSRF-TOKEN', token);
-              }
-            }
-        })
-    }
-</script>
+    <input type="submit" class="btn btn-success btn-lg" name="submit" value="Export" >
+</form>
 @endsection

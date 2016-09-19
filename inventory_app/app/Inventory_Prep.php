@@ -64,6 +64,14 @@ class Inventory_Prep extends Model
     }
 
     /**
+     * Get the staging item for the inventory_prep item.
+     */
+    public function temporary_sataging()
+    {
+        return $this->hasMany('App\Temporary_Staging');
+    }
+
+    /**
      * Scope a query to find if item already exists in QuickBooks
      *
      * @return array()
@@ -117,12 +125,12 @@ class Inventory_Prep extends Model
     }
 
     /**
-     * Scope a query to only include items ready to export. 
+     * Scope a query to only include items ready for staging. 
      * Must have details and qty set as well as have an open invoice.
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeReadyToExport($query)
+    public function scopeReadyForStaging($query)
     {
         return $query
             ->whereHas('invoice', function($query) {

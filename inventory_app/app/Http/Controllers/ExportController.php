@@ -8,26 +8,40 @@ use App;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-
+use App\Exceptions\InconsistentAttributeException;
+use App\Exceptions\DuplicateIdentifierException;
 use DB;
 
 class ExportController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a list of to be exported, inclding re-orders. 
+     * Also warns of errors with items.  
      *
      * @return Response
      */
     public function index()
     {
-        $open_invoices = App\Invoice::open()->select('id')->get();
+        //$open_invoices = App\Invoice::open()->select('id')->get();
 
-        $items = App\Inventory_Prep::whereIn('invoice_id', $open_invoices)
-                                    ->where('detail_set', true)
-                                    ->where('quantity_set', true)
-                                    ->where('reorder', false)
-                                    ->get();
-        return view('export.index', ['items' => $items, 'page' => 'export.index']);
+        // $items = App\Inventory_Prep::whereIn('invoice_id', $open_invoices)
+        //                             ->where('detail_set', true)
+        //                             ->where('quantity_set', true)
+        //                             ->where('reorder', false)
+        //                             ->get();
+
+        // prep staging stable
+        $this->populateStagingTable();
+        $items = App\Temporary_Staging::all();
+        $reorder_count = App\Temporary_Staging::where('reorder', true)->count();
+        $missing_price_rule = App\Temporary_Staging::where('price_rule_id', '0')->count();
+
+        return view('export.index', [
+            'items' => $items, 
+            'page' => 'export.index',
+            'reorder_count' => $reorder_count,
+            'missing_price_rule' => $missing_price_rule
+        ]);
     }
 
     /**
@@ -41,205 +55,25 @@ class ExportController extends Controller
     }
 
     /**
-     * Using to for testing only
-     *
-     * @return Response
-     */
-    public function storeTest2()
-    {
-        // Make sure staging table is clear
-        App\Temporary_Staging::truncate();
-
-        // Retrive items ready to export
-        $items = App\Inventory_Prep::readyToExport()->get();
-
-        // Loop through items and expand sizes requested into staging table
-        foreach ($items as $item) {
-            // retrive non zero colums
-            $matrix = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
-
-            // Enter each returned size into staging table
-            foreach ($matrix as $size => $quantity) {
-                // Check for price rule
-                $price_id = App\Price_Rule::matchPriceRule($item)->firstOrFail();
-
-
-                // Check for duplicates in staging
-                $duplicate_staging_item = App\Temporary_Staging::where('style', $item->style)->where('color', $item->color)->where('size', $size);
-
-                if ($duplicate_staging_item->exists()) {
-                    // check for other matching values
-                    $staging_item = $duplicate_staging_item->firstOrFail();
-                    
-                    // update
-                    $staging_item->store_1           += ( $item->quantity->store_1 * $quantity );
-                    $staging_item->store_2           += ( $item->quantity->store_2 * $quantity );
-                    $staging_item->store_3           += ( $item->quantity->store_3 * $quantity );
-                    $staging_item->store_4           += ( $item->quantity->store_4 * $quantity );
-
-                    $staging_item->save();
-
-                } else {
-
-                    // Check for re-orders **MAY DO OUTSIDE THIS LOOP**
-
-                    $staging_item = new App\Temporary_Staging;
-
-                    $staging_item->inventory_prep_id = $item->id;
-                    $staging_item->style             = $item->style;
-                    $staging_item->color             = $item->color;
-                    $staging_item->size              = $size;
-                    $staging_item->store_1           = ( $item->quantity->store_1 * $quantity );
-                    $staging_item->store_2           = ( $item->quantity->store_2 * $quantity );
-                    $staging_item->store_3           = ( $item->quantity->store_3 * $quantity );
-                    $staging_item->store_4           = ( $item->quantity->store_4 * $quantity );
-
-                    $staging_item->save();
-                }
-            }
-        }
-
-        return 'finished';        
-    }
-
-    /**
-     * Using to for testing only
-     *
-     * @return Response
-     */
-    public function storeTest()
-    {
-        // Make sure staging table is clear
-        // ** MUST UPDATE TO USE MODEL **
-        App\Temporary_Staging::truncate();
-
-        // Retrive items ready to export
-        $items = App\Inventory_Prep::readyToExport()->get();
-
-        /** 
-         * Check for repeating style+color 
-         * If none found then dont bother running any furhter checks for duplicates
-         */
-        $unique_style_color_list = $items->unique(function ($item) {
-                return $item['style'].$item['color'];
-            });
-        $unique_count = $items->unique(function ($item) {
-                return $item['style'].$item['color'].$item['size_matrix_id'];
-            })->count();
-
-
-
-
-
-
-
-        if ($items->count() != $unique_style_color_list->count()) {
-            // check for duplicate entries
-            if ($items->count() == $unique_count) {
-
-                $duplicate_keys = $items->diff($unique_style_color_list)->unique(function ($item) {
-                        return $item['style'].$item['color'];
-                    });;
-
-
-
-                //return $duplicate_keys;
-                // $duplicate_keys->each(function ($duplicate_entry) use ($items) {
-                //     $items->where('style', $duplicate_entry->style)->where('color', $duplicate_entry->color);
-                // });
-
-                foreach ($duplicate_keys as $duplicate_entry) {
-                    $duplicate_items = $items->where('style', $duplicate_entry->style)->where('color', $duplicate_entry->color);
-
-                    // *** Need to compare them 2 at a time *** //
-                    // check if the size matix of the repeating items overlap
-                    //$duplicate_items = null;
-
-
-                    // $reduced_matrices = array();  // initiate empty array
-                    // foreach ($duplicate_items as $item) {
-                    //     $reduced_matrix = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
-                    //     array_push($reduced_matrices, $reduced_matrix);
-                    // }
-                    // $overlaping_keys = call_user_func_array('array_intersect_key', $reduced_matrices);
-
-
-                }
-
-
-                // $duplicate_keys = $items->diff($unique_style_color_list)->map(function($item) { return ['style' => $item->style, 'color' => $item->color]; });
-
-
-                
-            } else {
-                 return 'Duplicate entries found.';
-            }
-        }
-
-
-
-
-
-
-
-
-        // Loop through items and expand sizes requested into staging table
-        foreach ($items as $item) {
-            // retrive non zero colums
-            $matrix = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
-
-            // Enter each returned size into staging table
-            foreach ($matrix as $size => $quantity) {
-                // Check for price rule
-                $price_id = App\Price_Rule::matchPriceRule($item)->id();
-
-                // Check for duplicates in staging
-
-                // Check for re-orders **MAY DO OUTSIDE THIS LOOP**
-
-                $staging_item = new App\Temporary_Staging;
-
-                $staging_item->inventory_prep_id = $item->id;
-                $staging_item->size              = $size;
-                $staging_item->store_1           = $item->quantity->store_1;
-                $staging_item->store_2           = $item->quantity->store_2;
-                $staging_item->store_3           = $item->quantity->store_3;
-                $staging_item->store_4           = $item->quantity->store_4;
-
-                $staging_item->save();
-            }
-        }
-
-        return 'finished';
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
-     * @return Response
+     * @return file
      */
     public function store(Request $request)
     {
-        //** Debugnin and optimization only
-        //DB::enableQueryLog();
-        //file_put_contents('query_log.txt', date("D M j G:i:s T Y")."\r", FILE_APPEND);
+        DB::transaction(function () use ($request) {
+            // prep staging stable
+            //$this->populateStagingTable();
 
-        // $request will contain flag of closing invoices
+            // Querry for item to be exported
+            $items = App\Temporary_Staging::readyToExport()->get();
 
-        $table = array();
+            // This will be used to build spreadsheet
+            $table = array();
 
-        $open_invoices = App\Invoice::open()->get();
-        // get starting id number
-        $current_id = App\QB_Inventory::max('id');
-
-
-        foreach ($open_invoices as $invoice) {
-            $items = App\Inventory_Prep::where('invoice_id', $invoice->id)
-                                        ->where('detail_set', true)
-                                        ->where('quantity_set', true)
-                                        ->where('reorder', 0)
-                                        ->get();
+            // get starting id number
+            $current_id = App\QB_Inventory::max('qb_id');
 
             foreach ($items as $item) {
                 /*
@@ -264,85 +98,121 @@ class ExportController extends Controller
                 *  #5 - (currently not in use)
                 */
 
-                // request fields dependent by price
-                $price = App\Price_Rule::generate($item->id);
+                // Shorten variable names for easier management. In Alphabetical order
+                $brand              = $item->inventory_prep->detail->brand;
+                $category_name      = $item->inventory_prep->detail->category->name;
+                $color              = $item->inventory_prep->color;
+                $cost               = $item->inventory_prep->cost;
+                ++$current_id;
+                $custom_price_1     = $item->price_rule->custom_price_1;
+                $custom_price_2     = $item->price_rule->custom_price_2;
+                $custom_price_3     = $item->price_rule->custom_price_3;
+                $custom_price_4     = $item->price_rule->custom_price_4;
+                $department_id      = $item->inventory_prep->department_id;
+                $department_name    = $item->inventory_prep->department->name;
+                $item_description   = $item->price_rule->item_description;
+                $online_color       = $item->inventory_prep->detail->online_color->name;
+                $qty_1              = $item->store_1;
+                $qty_2              = $item->store_2;
+                $qty_3              = $item->store_3;
+                $qty_4              = $item->store_4;
+                $regular_price      = $item->price_rule->regular_price;
+                $rewards            = $item->price_rule->rewards;
+                $size               = $item->size;
+                $style              = $item->inventory_prep->style;
+                $vendor_id          = $item->inventory_prep->invoice->vendor_id;
+                $vendor_name        = $item->inventory_prep->invoice->vendor->name;
 
-                // need a row per size available            
-                $sizes = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
+                // vendor+department+itmenumber = 13 digits min
+                $upc = sprintf("%02u%02u%09u", $vendor_id, $department_id, $current_id);
 
-                foreach ($sizes as $size => $qty) {
-                    ++$current_id;
-                    // vendor+department+itmenumber = 13 digits min
-                    $upc = sprintf("%02u%02u%09u", $item->invoice->vendor_id, $item->department_id, $current_id);
-
-                    $row = array(
-                        'Item Number'       =>  $current_id,
-                        'Item Name'         =>  $item->style,
-                        'Department Name'   =>  $item->department->name,
-                        'Department Code'   =>  $item->department_id,
-                        'Item Description'  =>  $price['item_description'],
-                        // 'Brief Description' => 
-                        'Attribute'         =>  $item->color,
-                        'Size'              =>  $size,
-                        'Average Unit Cost' =>  $item->cost,
-                        'Order Cost'        =>  $item->cost,
-                        'Vendor Name'       =>  $invoice->vendor->name,
-                        'Vendor Code'       =>  $invoice->vendor_id,
-                        'Regular Price'  =>     $price['regular_price'],
-                        'Custom Price 1' =>     $price['custom_1'],
-                        'Custom Price 2' =>     $price['custom_2'],
-                        'Custom Price 3' =>     $price['custom_3'],
-                        'Custom Price 4' =>     $price['custom_4'],
-                        'Tax Code'       =>     'Tax',
-                        'UPC'       =>  $upc,
-                        'Item Type' =>  'Inventory',
-                        'Qty 1' =>      ($qty)*($item->quantity->{'store_1'}),
-                        'Qty 2' =>      ($qty)*($item->quantity->{'store_2'}),
-                        'Qty 3' =>      ($qty)*($item->quantity->{'store_3'}),
-                        'Qty 4' =>      ($qty)*($item->quantity->{'store_4'}),
-                        // 'Qty 5' => 
-                        // 'Qty 6' => 
-                        // 'Qty 7' => 
-                        // 'Qty 8' => 
-                        // 'Qty 9' => 
-                        // 'Qty 10' => 
-                        // 'Qty 11' => 
-                        // 'Qty 12' => 
-                        // 'Qty 13' => 
-                        // 'Qty 14' => 
-                        // 'Qty 15' => a
-                        // 'Qty 16' => 
-                        // 'Qty 17' => 
-                        // 'Qty 18' => 
-                        // 'Qty 19' => 
-                        // 'Qty 20' => 
-                        'Custom Field 1' =>     $item->detail->brand,
-                        'Custom Field 2' =>     $item->detail->category->name,
-                        'Custom Field 3' =>     $item->detail->online_color->name,
-                        // 'Custom Field 4' => 
-                        // 'Custom Field 5' => 
-                        'Print Tags'              => 'Yes',
-                        'Eligible for Commission' => 'No',
-                        'Eligible for Rewards'    => ($price['rewards']) ? 'Yes' : 'No',
-                        // 'Weight' => 
-                    );
-
-                    array_push($table, $row);
+                // verify item does not exist in QB_inventory
+                $duplicate_identifier = App\QB_Inventory::where('qb_id', $current_id)
+                                              ->orwhere('upc', $upc);
+                if ($duplicate_identifier->count() > 0) {
+                    $message = 'Found a duplicate identifier in QuickBook Inventory.  Either item number: <strong>'.$current_id.'</strong> or UPC: <strong> '.$upc.'</strong> already exist in database. Please contact Development department.';
+                    throw new DuplicateIdentifierException($message);
                 }
-            }   
-        }
 
 
+                $row = array(
+                    'Item Number'       =>  $current_id,
+                    'Item Name'         =>  $style,
+                    'Department Name'   =>  $department_name,
+                    'Department Code'   =>  $department_id,
+                    'Item Description'  =>  $item_description,
+                    // 'Brief Description' => 
+                    'Attribute'         =>  $color,
+                    'Size'              =>  $size,
+                    'Average Unit Cost' =>  $cost,
+                    'Order Cost'        =>  $cost,
+                    'Vendor Name'       =>  $vendor_name,
+                    'Vendor Code'       =>  $vendor_id,
+                    'Regular Price'     =>  $regular_price,
+                    'Custom Price 1'    =>  $custom_price_1,
+                    'Custom Price 2'    =>  $custom_price_2,
+                    'Custom Price 3'    =>  $custom_price_3,
+                    'Custom Price 4'    =>  $custom_price_4,
+                    'Tax Code'          =>  'Tax',
+                    'UPC'               =>  $upc,
+                    'Item Type'         =>  'Inventory',
+                    'Qty 1'             =>  $qty_1,
+                    'Qty 2'             =>  $qty_2,
+                    'Qty 3'             =>  $qty_3,
+                    'Qty 4'             =>  $qty_4,
+                    // 'Qty 5' => 
+                    // 'Qty 6' => 
+                    // 'Qty 7' => 
+                    // 'Qty 8' => 
+                    // 'Qty 9' => 
+                    // 'Qty 10' => 
+                    // 'Qty 11' => 
+                    // 'Qty 12' => 
+                    // 'Qty 13' => 
+                    // 'Qty 14' => 
+                    // 'Qty 15' => 
+                    // 'Qty 16' => 
+                    // 'Qty 17' => 
+                    // 'Qty 18' => 
+                    // 'Qty 19' => 
+                    // 'Qty 20' => 
+                    'Custom Field 1'    =>   $brand,
+                    'Custom Field 2'    =>   $category_name,
+                    'Custom Field 3'    =>   $online_color,
+                    // 'Custom Field 4' => 
+                    // 'Custom Field 5' => 
+                    'Print Tags'              => 'Yes',
+                    'Eligible for Commission' => 'No',
+                    'Eligible for Rewards'    => ($rewards) ? 'Yes' : 'No',
+                    // 'Weight' => 
+                );
+                array_push($table, $row);
 
-        Excel::create('Filename'.date('c'), function($excel) use($table) {
+                $qb_inventory = App\QB_Inventory::create([
+                    'qb_id'        => $current_id,
+                    'style'     => $style,
+                    'color'     => $color,
+                    'size'      => $size,
+                    'upc'       => $upc
+                ]);
+            }  
 
-        $excel->sheet('Sheetname', function($sheet) use($table) {
-                $sheet->fromArray($table);
-            });
-        })->export('xls');
+            // $request will contain flag of closing invoices
+            if (isset($request->close_invoice)) {
+                $invoice_ids = array_unique($items->fetch('inventory_prep.invoice.id')->toArray());
+                 App\Invoice::whereIn('id', $invoice_ids)->update(['open' => false]);
+            }
 
-        return ('ok');
+            $filename = 'QB_Inventory_Import_'.date('Y_F_d_\THi');//.str_replace(' ', '_', date("r"));
+            Excel::create($filename, function($excel) use($table) {
+                $excel->sheet('Sheetname', function($sheet) use($table) {
+                    $sheet->fromArray($table);
+                });
+            })->store('xls')->export('xls');
 
+            $reorders = App\Temporary_Staging::reorders();
+            return view('export.reorder', ['reorders' => $reorders]);
+        });
     }
 
     /**
@@ -388,5 +258,113 @@ class ExportController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Populates Staging table
+     *
+     */
+    protected function populateStagingTable()
+    {
+        // Make sure staging table is clear
+        //App\Temporary_Staging::truncate(); // does not work with transaction()
+        DB::table('temporary_stagings')->truncate();
+
+        // Retrive items ready to export
+        $items = App\Inventory_Prep::readyForStaging()->get();
+
+        // Loop through items and expand sizes requested into staging table
+        foreach ($items as $item) {
+            // retrive non zero colums
+            $matrix = App\Size_Matrix::nonZeroColumns($item->size_matrix_id);
+
+            // Enter each returned size into staging table
+            foreach ($matrix as $size => $quantity) {
+                // Check for duplicates in staging
+                $duplicate_staging_item = App\Temporary_Staging::whereHas('inventory_prep', function ($query) use ($item) {
+                    $query->where('style', $item->style)
+                          ->where('color', $item->color);
+                })->where('size', $size);
+
+                if ($duplicate_staging_item->exists()) {
+                    // seleet the other matching item
+                    $staging_item = $duplicate_staging_item->firstOrFail();
+
+                    // Compare other attributes to see if it really is the same item or just has the exact same name
+                    /*
+                    Cost
+                    Department
+                    Category
+                    brand
+                    online color
+                    vendor
+                    */
+                    $header = 'Found duplicate item. Style: <strong>'.$item->style
+                        .'</strong> Color: <strong>'.$item->color
+                        .'</strong> Size: <strong>'.$size
+                        .'</strong> on invoices: <strong>'.$item->invoice->invoice_number
+                        .'</strong> and <strong>'.$staging_item->inventory_prep->invoice->invoice_number.'</strong>, BUT the ';
+                    if ($staging_item->inventory_prep->cost != $item->cost) {
+                        $message = $header.'<strong>Cost</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    if ($staging_item->inventory_prep->department_id != $item->department_id) {
+                        $message = $header.'<strong>Department</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    if ($staging_item->inventory_prep->detail->category_id != $item->detail->category_id) {
+                        $message = $header.'<strong>Category</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    if ($staging_item->inventory_prep->detail->brand != $item->detail->brand) {
+                        $message = $header.'<strong>Brand</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    if ($staging_item->inventory_prep->detail->online_color_id != $item->detail->online_color_id) {
+                        $message = $header.'<strong>Online Color</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    if ($staging_item->inventory_prep->invoice->vendor_id != $item->invoice->vendor_id) {
+                        $message = $header.'<strong>Vendor</strong> in the items do not match.  Please double check that all information for both items is correct.';
+                        throw new InconsistentAttributeException($message);
+                    }
+                    
+                    // update
+                    $staging_item->store_1           += ( $item->quantity->store_1 * $quantity );
+                    $staging_item->store_2           += ( $item->quantity->store_2 * $quantity );
+                    $staging_item->store_3           += ( $item->quantity->store_3 * $quantity );
+                    $staging_item->store_4           += ( $item->quantity->store_4 * $quantity );
+
+                    $staging_item->save();
+
+                } else {
+                    // Reorder and price_rule check only has to be done onece, so dont need to querry for every duplicate found
+                    $matching_price_rule = App\Price_Rule::matchPriceRule($item);
+                    if ($matching_price_rule->exists()) {
+                        $price_rule = $matching_price_rule->first()->id;
+                    } else {
+                        $price_rule = '';
+                    }
+                    
+                    $reorder = App\QB_Inventory::where('style', $item->style)
+                                               ->where('color', $item->color)
+                                               ->where('size', $size);
+                    $reorder_check = ($reorder->exists()) ? true : false ;
+
+                    $staging_item = new App\Temporary_Staging;
+
+                    $staging_item->inventory_prep_id = $item->id;
+                    $staging_item->size              = $size;
+                    $staging_item->price_rule_id     = $price_rule;
+                    $staging_item->reorder           = $reorder_check;
+                    $staging_item->store_1           = ( $item->quantity->store_1 * $quantity );
+                    $staging_item->store_2           = ( $item->quantity->store_2 * $quantity );
+                    $staging_item->store_3           = ( $item->quantity->store_3 * $quantity );
+                    $staging_item->store_4           = ( $item->quantity->store_4 * $quantity );
+
+                    $staging_item->save();
+                }
+            }
+        }
     }
 }

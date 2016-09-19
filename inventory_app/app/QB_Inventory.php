@@ -12,4 +12,19 @@ class QB_Inventory extends Model
      * @var string
      */
     protected $table = 'qb_inventory';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['qb_id', 'style', 'color', 'size', 'upc'];
+
+    /**
+     * Get the comments for the blog post.
+     */
+    public function comments()
+    {
+        return $this->hasMany('App\Reoder_History');
+    }
 }

@@ -24,8 +24,8 @@
 					<th>Invoice ID</th>
 					<th>Vendor</th>
 					<th>Notes</th>
-			    <th>Page</th>
-		    </tr>
+				    <th>Page</th>
+			    </tr>
 			</thead>
 			<tbody>
 			@foreach ($invoices as $invoice)

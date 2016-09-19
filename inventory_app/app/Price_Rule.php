@@ -38,6 +38,15 @@ class Price_Rule extends Model
     }
 
     /**
+     * Get the staging item for the inventory_prep item.
+     */
+    public function temporary_sataging()
+    {
+        return $this->hasMany('App\Temporary_Staging');
+    }
+
+    /**  
+     * DEPRECIATED SHOULD NOT USE ANYMORE
      * Scope a query to find the colums with non zero values
      *
      * @return array(
