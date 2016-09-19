@@ -65,6 +65,7 @@ class Price_Rule extends Model
                         //->has('')
 
                         ->first();
+        return $rule;
 
         $generated = array(
             'item_description' => $rule->item_desctiption,
@@ -76,5 +77,27 @@ class Price_Rule extends Model
             'rewards' => $rule->rewards
         );
         return $generated;
+    }
+
+    /**
+     * Scope a query to find matching price rule.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $item
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMatchPriceRule($query, Model $item)
+    {
+        return $query->where('minimum_cost', '<=', $item->cost)
+                     ->where('maximum_cost', '>=', $item->cost)
+                     ->whereHas('department', function ($q) use ($item) {
+                         $q->where('id', $item->department->id);
+                     })
+                     ->whereHas('category', function ($q) use ($item) {
+                         $q->where('id', $item->detail->category->id);
+                     })
+                     ->whereHas('vendor', function ($q) use ($item) {
+                         $q->where('id', $item->invoice->vendor->id);
+                     })
+                     ->orderBy('priority');
     }
 }

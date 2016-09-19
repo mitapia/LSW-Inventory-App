@@ -115,4 +115,20 @@ class Inventory_Prep extends Model
         }
         return array('status' => 'false');
     }
+
+    /**
+     * Scope a query to only include items ready to export. 
+     * Must have details and qty set as well as have an open invoice.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeReadyToExport($query)
+    {
+        return $query
+            ->whereHas('invoice', function($query) {
+                $query->where('open', true);
+            })
+            ->where('detail_set', true)
+            ->where('quantity_set', true);
+    }
 }
